@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Happy Birthday</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600&family=Outfit:wght@400;600;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: { fontFamily: {
+    display: ['Outfit','system-ui','sans-serif'],
+    body:    ['Work Sans','system-ui','sans-serif'],
+    book:    ['Source Serif 4','Georgia','serif']
+  } } } };
+</script>
+<style>
+/* ============================================================
+   INK ON CONFETTI PAPER
+   Hard ink line-work — 2px borders, square corners, hard offset
+   shadows, never soft grey blurs — printed on warm confetti paper.
+   Colour comes only from the six book spines (+ amber = "lit").
+   ============================================================ */
+:root{
+  --paper:     #FFF9F5;   /* warm confetti paper */
+  --paper-2:   #FFFFFF;
+  --page:      #FAF6EA;   /* inside a book only */
+  --page-edge: #EFE7D4;
+  --ink:       #17181C;   /* 17.0:1 on paper */
+  --ink-soft:  #4A4C55;   /*  8.2:1 on paper */
+  --rule:      rgba(23,24,28,.10);
+  --lit:       #E8A33D;   /* functional "lit / warm", not an accent */
+  --lit-core:  #FFD98A;
+
+  --stroke: 2px;
+  --hard:    4px 4px 0 var(--ink);
+  --hard-sm: 3px 3px 0 var(--ink);
+  --hard-lg: 6px 6px 0 var(--ink);
+
+  --e-out: cubic-bezier(.2,.8,.25,1);
+  --e-in:  cubic-bezier(.5,0,.85,.4);
+  --t-fast:140ms;
+  --t-mid: 240ms;
+
+  color-scheme: light;
+}
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; scroll-padding-top:24px; }
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:'Work Sans',system-ui,sans-serif; font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+#confetti{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+#burst{ position:fixed; inset:0; z-index:50; pointer-events:none; }
+main{ position:relative; z-index:1; }
+
+:focus{ outline:none; }
+:focus-visible{ outline:3px solid var(--ink); outline-offset:3px; }
+.skip{ position:absolute; left:-9999px; top:0; z-index:100;
+  background:var(--ink); color:var(--paper); padding:12px 18px; font-weight:600; }
+.skip:focus{ left:12px; top:12px; }
+button{ font:inherit; color:inherit; touch-action:manipulation; }
+
+.section{ padding:clamp(56px,9vw,112px) 20px; }
+.wrap{ max-width:1140px; margin:0 auto; }
+main h2{
+  font-family:'Outfit',system-ui,sans-serif; font-weight:800;
+  font-size:clamp(28px,5vw,46px); line-height:1.08; letter-spacing:-.02em;
+  margin:0 0 12px; text-wrap:balance;
+}
+.lede{ color:var(--ink-soft); max-width:56ch; margin:0 0 36px; font-size:clamp(16px,1.6vw,18px); }
+.hand{ font-weight:600; }
+.sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+.card{ background:var(--paper-2); border:var(--stroke) solid var(--ink); box-shadow:var(--hard); }
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  min-height:48px; padding:0 20px;
+  border:var(--stroke) solid var(--ink); background:var(--paper-2);
+  font-weight:600; letter-spacing:.01em; box-shadow:var(--hard-sm); cursor:pointer;
+  transition:transform var(--t-fast) var(--e-out), box-shadow var(--t-fast) var(--e-out),
+             background var(--t-fast) linear;
+}
+.btn:hover:not(:disabled){ transform:translate(-1px,-1px); box-shadow:5px 5px 0 var(--ink); }
+.btn:active:not(:disabled){ transform:translate(3px,3px); box-shadow:0 0 0 var(--ink); }
+.btn:disabled{ opacity:.45; cursor:not-allowed; box-shadow:none; transform:none; }
+.btn-solid{ background:var(--ink); color:var(--paper); }
+
+/* ============================ HERO ============================ */
+.hero{ min-height:100svh; display:flex; flex-direction:column; justify-content:center; padding:84px 20px 64px; }
+.hero-inner{ max-width:1140px; margin:0 auto; width:100%; }
+.hero-ribbon{ width:190px; height:26px; margin:0 0 24px; }
+.hero-ribbon path{ stroke-dasharray:1; stroke-dashoffset:1; }
+.hero-name{ display:block; font-family:'Outfit',system-ui,sans-serif; font-weight:600;
+  font-size:clamp(22px,3.4vw,32px); letter-spacing:.02em; margin:0 0 4px;
+  opacity:0; transform:translateY(10px); }
+.hero-age{ position:relative; display:block; font-family:'Outfit',system-ui,sans-serif;
+  font-weight:800; font-size:clamp(56px,15.5vw,190px); line-height:.92;
+  letter-spacing:-.035em; margin:0; }
+.hero-age .outline{ display:block; color:transparent; -webkit-text-stroke:2px var(--ink); opacity:0; }
+.hero-age .fill{ position:absolute; left:0; top:0; right:0; bottom:auto;
+  padding-bottom:.3em; display:block; color:transparent;
+  -webkit-text-fill-color:transparent; -webkit-background-clip:text; background-clip:text;
+  background-repeat:no-repeat; clip-path:inset(0 100% 0 0); }
+.hero-line{ margin:28px 0 0; max-width:44ch; font-size:clamp(17px,2vw,21px);
+  color:var(--ink-soft); opacity:0; transform:translateY(8px); }
+.hero-scroll{ margin-top:42px; display:inline-flex; align-items:center; gap:10px;
+  font-size:15px; font-weight:600; color:var(--ink); text-decoration:none;
+  padding:12px 18px; border:var(--stroke) solid var(--ink); background:var(--paper-2);
+  box-shadow:var(--hard-sm); opacity:0; }
+.hero-scroll:hover{ transform:translate(-1px,-1px); box-shadow:5px 5px 0 var(--ink); }
+
+html[data-intro="run"] .hero-ribbon path{ transition:stroke-dashoffset 900ms var(--e-out) 80ms; stroke-dashoffset:0; }
+html[data-intro="run"] .hero-name{ transition:opacity 460ms var(--e-out) 460ms, transform 460ms var(--e-out) 460ms; opacity:1; transform:none; }
+html[data-intro="run"] .hero-age .outline{ transition:opacity 420ms var(--e-out) 680ms; opacity:1; }
+html[data-intro="run"] .hero-age .fill{ transition:clip-path 950ms var(--e-out) 1040ms; clip-path:inset(0 0 0 0); }
+html[data-intro="run"] .hero-line{ transition:opacity 500ms var(--e-out) 1560ms, transform 500ms var(--e-out) 1560ms; opacity:1; transform:none; }
+html[data-intro="run"] .hero-scroll{ transition:opacity 500ms var(--e-out) 1760ms; opacity:1; }
+html[data-intro="done"] .hero-ribbon path{ stroke-dashoffset:0; }
+html[data-intro="done"] .hero-name,
+html[data-intro="done"] .hero-line{ opacity:1; transform:none; }
+html[data-intro="done"] .hero-age .outline,
+html[data-intro="done"] .hero-scroll{ opacity:1; }
+html[data-intro="done"] .hero-age .fill{ clip-path:inset(0 0 0 0); }
+
+/* ========================== PUZZLE ========================== */
+.puzzle-layout{ display:grid; gap:38px; align-items:start; }
+@media (min-width:900px){ .puzzle-layout{ grid-template-columns:minmax(0,430px) minmax(0,1fr); gap:54px; } }
+.puzzle-frame{ position:relative; width:100%; background:var(--paper-2);
+  border:var(--stroke) solid var(--ink); box-shadow:var(--hard); }
+#puzzleGrid{ position:relative; display:grid; grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr); gap:0;
+  /* pieces are boxed wider than their cell to carry the tabs; the outer edges
+     of the border pieces are straight, so clipping loses nothing */
+  overflow:hidden; }
+.piece{ position:relative; border:0; padding:0; margin:calc(-1 * var(--ovh));
+  background:none; pointer-events:none; z-index:1; transition:filter var(--t-fast) linear; }
+.piece-art{ position:absolute; inset:0; pointer-events:auto; cursor:pointer;
+  background-repeat:no-repeat; background-color:var(--paper-2);
+  -webkit-clip-path:var(--clip); clip-path:var(--clip); }
+.piece:hover{ z-index:3; filter:brightness(1.07); }
+.piece[aria-pressed="true"]{ z-index:5;
+  filter:drop-shadow(2px 0 0 var(--lit)) drop-shadow(-2px 0 0 var(--lit))
+         drop-shadow(0 2px 0 var(--lit)) drop-shadow(0 -2px 0 var(--lit)) brightness(1.06); }
+.piece:focus-visible{ outline:none; z-index:6;
+  filter:drop-shadow(2px 0 0 var(--ink)) drop-shadow(-2px 0 0 var(--ink))
+         drop-shadow(0 2px 0 var(--ink)) drop-shadow(0 -2px 0 var(--ink)); }
+.piece .num{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  font-size:12px; font-weight:600; color:var(--ink); background:var(--paper-2);
+  border:1.5px solid var(--ink); min-width:22px; height:22px; line-height:19px;
+  text-align:center; opacity:0; transition:opacity var(--t-fast) linear;
+  pointer-events:none; z-index:2; }
+.piece:hover .num,.piece:focus-visible .num,.piece[aria-pressed="true"] .num{ opacity:1; }
+/* width/height must be explicit: an <svg> is a replaced element, so inset:0
+   alone leaves it at its viewBox aspect ratio instead of filling the grid */
+#seams{ position:absolute; inset:0; width:100%; height:100%; z-index:4;
+  pointer-events:none; transition:opacity 560ms var(--e-out); }
+#seams path{ fill:none; stroke:var(--ink); stroke-width:2; vector-effect:non-scaling-stroke; }
+#puzzleGrid.solved #seams{ opacity:0; }
+#puzzleGrid.solved .piece{ cursor:default; }
+#puzzleGrid.solved .piece .num{ opacity:0 !important; }
+#puzzleGrid.no-photo .piece-art{ background-image:repeating-linear-gradient(45deg,
+  rgba(23,24,28,.10) 0 7px, transparent 7px 14px) !important; }
+#photoWarn{ border:var(--stroke) dashed var(--ink); background:var(--paper-2);
+  padding:14px 16px; margin-top:16px; font-size:14px; }
+#peekLayer{ position:absolute; inset:0; z-index:7; background-repeat:no-repeat;
+  opacity:0; pointer-events:none; transition:opacity 320ms var(--e-out); }
+#peekLayer.on{ opacity:1; }
+.puzzle-status{ min-height:1.6em; margin:16px 0 0; font-weight:600; }
+
+/* ---------------------------- CAKE ---------------------------- */
+.cake-stage{ margin-top:28px; min-height:290px; }
+.cake{ width:min(500px,100%); margin:0 auto; opacity:0; transform:scale(.92) translateY(18px);
+  transition:opacity 520ms var(--e-out), transform 620ms var(--e-out); }
+.cake.show{ opacity:1; transform:none; }
+.cake svg{ display:block; width:100%; height:auto; }
+.cake .body-line{ stroke:var(--ink); stroke-width:2; fill:none; opacity:.5; }
+.cake .ink{ stroke:var(--ink); stroke-width:3; stroke-linejoin:round; }
+.cake .candle-g{ opacity:0; transform:scaleY(.2); transform-box:fill-box; transform-origin:50% 100%; }
+.cake.lit .candle-g{ opacity:1; transform:none;
+  transition:opacity 260ms var(--e-out), transform 420ms var(--e-out);
+  transition-delay:calc(var(--i) * 34ms + 240ms); }
+.cake .flame{ opacity:0; transform-box:fill-box; transform-origin:50% 100%; }
+.cake.lit .flame{ opacity:1; transition:opacity 220ms linear;
+  transition-delay:calc(var(--i) * 34ms + 580ms);
+  animation:flicker 900ms ease-in-out infinite alternate;
+  animation-delay:calc(var(--i) * 34ms + 860ms); }
+.cake.out .flame{ opacity:0 !important; animation:none !important;
+  transform:scale(.2) translateY(4px); transition:opacity 160ms linear, transform 200ms var(--e-in);
+  transition-delay:calc(var(--i) * 16ms); }
+.cake .smoke{ opacity:0; transform-box:fill-box; transform-origin:50% 100%; }
+.cake.out .smoke{ animation:smoke 1500ms ease-out forwards;
+  animation-delay:calc(var(--i) * 16ms + 120ms); }
+@keyframes flicker{
+  0%  { transform:scale(1)  rotate(-2deg); opacity:1; }
+  50% { transform:scaleY(.88) scaleX(1.05); opacity:.88; }
+  100%{ transform:scale(1.05) rotate(2deg); opacity:1; }
+}
+@keyframes smoke{
+  0%  { opacity:0;   transform:translateY(0)     scale(.6); }
+  25% { opacity:.55; }
+  100%{ opacity:0;   transform:translateY(-46px) scale(1.5); }
+}
+.cake-glow{ transition:opacity 700ms var(--e-out) 700ms; opacity:0; }
+.cake.lit .cake-glow{ opacity:1; }
+.cake.out .cake-glow{ opacity:0; transition:opacity 500ms var(--e-out); }
+.wish{ margin-top:20px; }
+.wish-row{ display:flex; flex-wrap:wrap; gap:12px; margin-top:12px; }
+#micMeter{ width:min(300px,100%); height:12px; margin:14px 0 0;
+  border:var(--stroke) solid var(--ink); background:var(--paper-2); overflow:hidden; }
+#micMeter i{ display:block; height:100%; width:0%; background:var(--lit);
+  transition:width 90ms linear; }
+
+/* ========================= TIMELINE ========================= */
+.years{ display:grid; gap:0; border-top:var(--stroke) solid var(--ink); }
+.year{ display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:baseline;
+  padding:22px 4px; border-bottom:1px solid var(--rule); }
+@media (min-width:768px){ .year{ grid-template-columns:92px 1fr; gap:32px; padding:28px 8px; } }
+.year-n{ font-family:'Outfit',system-ui,sans-serif; font-weight:800; letter-spacing:-.03em;
+  font-size:clamp(34px,6vw,58px); line-height:1; color:transparent;
+  -webkit-text-stroke:2px var(--ink); transition:color 200ms linear; }
+.year:hover .year-n,.year:focus-within .year-n{ -webkit-text-stroke:2px transparent; color:var(--yc); }
+.year-t{ font-size:clamp(15px,1.7vw,18px); max-width:62ch; margin:0; }
+
+/* ====================== 21 NOTES ====================== */
+.notes{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+@media (min-width:560px){ .notes{ grid-template-columns:repeat(5,1fr); gap:14px; } }
+@media (min-width:900px){ .notes{ grid-template-columns:repeat(7,1fr); gap:16px; } }
+.note{ position:relative; aspect-ratio:1/1; border:0; padding:0; background:none;
+  cursor:pointer; perspective:800px; }
+/* absolute, not width/height:100% — a percentage height inside a <button>
+   does not resolve, so the card collapsed to 0x0 and had nothing to flip */
+.note-inner{ position:absolute; inset:0; transform-style:preserve-3d;
+  transition:transform 560ms var(--e-out); }
+.note[aria-expanded="true"] .note-inner{ transform:rotateY(180deg); }
+.note-face{ position:absolute; inset:0; -webkit-backface-visibility:hidden;
+  backface-visibility:hidden; display:flex; align-items:center; justify-content:center;
+  padding:8px; border:var(--stroke) solid var(--ink); box-shadow:var(--hard-sm); }
+.note-front{ background:var(--nc); color:var(--nt);
+  font-family:'Outfit',system-ui,sans-serif; font-weight:800; font-size:clamp(18px,3.4vw,26px); }
+.note-front::after{ content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(255,255,255,.16) 0 49.6%,
+    rgba(0,0,0,.07) 49.6% 50.4%, rgba(0,0,0,.03) 50.4% 100%); }
+.note-back{ background:var(--paper-2); transform:rotateY(180deg); color:var(--ink);
+  font-family:'Source Serif 4',Georgia,serif; font-size:clamp(13px,2.2vw,15px);
+  line-height:1.35; text-align:center; overflow:hidden; }
+.note:hover .note-inner{ transform:translate(-2px,-2px); }
+.note[aria-expanded="true"]:hover .note-inner{ transform:rotateY(180deg) translate(2px,-2px); }
+.notes-count{ margin-top:18px; font-weight:600; color:var(--ink-soft); }
+
+/* ======================== THE PILE ======================== */
+/* the tilted, offset cards reach past the stage; clip at the section edge
+   (overflow-x:clip, so it makes no scroll container and no scrollbar) */
+#pile{ overflow-x:clip; }
+.pile-stage{ position:relative; width:min(430px,100%); aspect-ratio:43/56;
+  margin:0 auto 26px; }
+@media (max-width:599px){ .pile-stage{ width:min(430px, 100% - 24px); } }
+.pile-card{
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  padding:12px 12px 0; border:var(--stroke) solid var(--ink);
+  background:var(--paper-2); box-shadow:var(--hard); cursor:pointer;
+  transform:translate(calc(var(--k,0) * var(--dx,10px)), calc(var(--k,0) * -8px))
+            rotate(var(--rot,0deg)) scale(calc(1 - var(--k,0) * 0.028));
+  transition:transform 420ms var(--e-out), opacity 300ms linear;
+  will-change:transform; }
+.pile-card[disabled]{ cursor:default; }
+.pile-card:not([disabled]):hover{
+  transform:translate(-2px,-10px) rotate(var(--rot,0deg)); }
+.pile-photo{ flex:1 1 auto; min-height:0; overflow:hidden;
+  border:1.5px solid var(--ink); background:var(--paper-2); }
+.pile-photo img{ display:block; width:100%; height:100%; object-fit:cover; }
+.pile-photo.lost{ background-image:repeating-linear-gradient(45deg,
+  rgba(23,24,28,.10) 0 7px, transparent 7px 14px); }
+.pile-photo.lost img{ display:none; }
+.pile-cap{ flex:none; padding:12px 6px 14px; text-align:center;
+  font-family:'Source Serif 4',Georgia,serif; font-style:italic;
+  font-size:clamp(14px,1.6vw,17px); line-height:1.3; color:var(--ink);
+  overflow:hidden; }
+.pile-card.dealing{ transform:translate(135%,-14%) rotate(19deg); opacity:0; }
+.pile-card.dealing-back{ transform:translate(-135%,-14%) rotate(-19deg); opacity:0; }
+.pile-bar{ display:flex; align-items:center; justify-content:center; gap:18px; }
+#pileCount{ font-weight:600; color:var(--ink-soft); min-width:8ch; text-align:center; }
+.pile-hint{ margin:14px 0 0; text-align:center; font-size:14px; color:var(--ink-soft); }
+.pile-note{ margin:16px auto 0; max-width:52ch; font-size:14px; color:var(--ink-soft);
+  border-left:3px solid var(--ink); padding-left:12px; }
+
+/* ========================== RHYTHM ========================== */
+.ecg-wrap{ border:var(--stroke) solid var(--ink); background:var(--paper-2);
+  box-shadow:var(--hard); overflow-x:auto; overscroll-behavior-x:contain; }
+.ecg-paper{ min-width:820px;
+  background-image:
+    linear-gradient(rgba(23,24,28,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23,24,28,.055) 1px, transparent 1px),
+    linear-gradient(rgba(23,24,28,.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23,24,28,.11) 1px, transparent 1px);
+  background-size:9px 9px, 9px 9px, 45px 45px, 45px 45px; }
+.ecg-paper svg{ display:block; width:100%; height:auto; }
+.ecg-trace{ fill:none; stroke-width:3; stroke-linejoin:round; stroke-linecap:round; }
+.ecg-caption{ display:flex; flex-wrap:wrap; gap:8px 24px; justify-content:space-between;
+  margin-top:14px; font-size:14px; color:var(--ink-soft); }
+.ecg-caption b{ color:var(--ink); font-weight:600; }
+
+/* ========================= BOOKSHELF ========================= */
+.shelf-unit{ background:var(--paper-2); border:var(--stroke) solid var(--ink);
+  box-shadow:var(--hard-lg); padding:28px 12px 0; max-width:840px; margin-inline:auto; }
+@media (min-width:600px){ .shelf-unit{ padding:36px 24px 0; } }
+@media (min-width:900px){ .shelf-unit{ padding:44px 36px 0; } }
+.shelf{ --shelf-h:250px; }
+@media (min-width:600px){ .shelf{ --shelf-h:350px; } }
+@media (min-width:900px){ .shelf{ --shelf-h:440px; } }
+.books{ list-style:none; margin:0; padding:0; display:flex; align-items:flex-end;
+  justify-content:center; gap:2px; flex-wrap:nowrap; }
+@media (min-width:900px){ .books{ gap:3px; } }
+.books > li{ flex:var(--wf) 1 0; min-width:0; max-width:calc(var(--wf) * 145px); display:flex; }
+.book{
+  --spine:#333; --foil:#E1C07C;
+  position:relative; display:flex; flex-direction:column; align-items:center;
+  justify-content:flex-start; gap:9px; width:100%; min-width:40px;
+  height:calc(var(--h) * var(--shelf-h)); min-height:130px;
+  padding:13px 0; border:0; cursor:pointer;
+  background:var(--spine); color:var(--foil);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.34), 3px 5px 10px -4px rgba(23,24,28,.55);
+  transition:transform var(--t-mid) var(--e-out), box-shadow var(--t-mid) var(--e-out); }
+/* the rounded spine: light catches the left edge, shadow rolls off the right */
+.book::before{ content:''; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(90deg,
+    rgba(0,0,0,.38) 0%, rgba(0,0,0,.12) 3%, rgba(255,255,255,.20) 15%,
+    rgba(255,255,255,.07) 40%, rgba(0,0,0,.05) 66%,
+    rgba(0,0,0,.20) 88%, rgba(0,0,0,.42) 100%); }
+/* cloth weave */
+.book::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.45;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.045) 0 1px, transparent 1px 3px); }
+.spine-rule{ flex:none; width:54%; height:2px; background:currentColor; opacity:.7; z-index:1; }
+.spine-block{ flex:1 1 auto; display:flex; align-items:center; justify-content:center;
+  min-height:0; overflow:hidden; z-index:1; }
+.spine-title{ writing-mode:vertical-rl; text-orientation:mixed;
+  font-family:'Source Serif 4',Georgia,serif; font-weight:600;
+  font-size:clamp(11px,2.4vw,20px); letter-spacing:.03em; line-height:1.05;
+  max-height:100%; overflow:hidden; text-shadow:0 1px 0 rgba(255,255,255,.18); }
+.spine-author{ flex:none; writing-mode:vertical-rl; text-orientation:mixed;
+  font-family:'Work Sans',sans-serif; font-weight:500; font-size:clamp(9px,1.3vw,11px);
+  letter-spacing:.16em; text-transform:uppercase; opacity:.92; z-index:1;
+  max-height:34%; overflow:hidden; }
+.spine-pub{ flex:none; writing-mode:vertical-rl; font-family:'Work Sans',sans-serif;
+  font-weight:600; font-size:clamp(8px,1.1vw,10px); letter-spacing:.2em;
+  text-transform:uppercase; opacity:.8; z-index:1; }
+@media (max-width:599px){ .spine-author,.spine-pub{ display:none; } }
+.book:hover,.book:focus-visible{ transform:translateY(-22px);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.34), 0 0 0 3px rgba(232,163,61,.9),
+             0 22px 42px -12px rgba(232,163,61,.75); }
+.book:active{ transform:translateY(-10px); }
+.shelf-plank{ height:20px; margin:-2px -12px 0; border:var(--stroke) solid var(--ink);
+  background:var(--paper-2);
+  background-image:repeating-linear-gradient(90deg, transparent 0 26px, rgba(23,24,28,.09) 26px 27px); }
+@media (min-width:600px){ .shelf-plank{ margin:-2px -24px 0; } }
+@media (min-width:900px){ .shelf-plank{ margin:-2px -36px 0; } }
+.shelf-hint{ margin-top:18px; font-size:14px; color:var(--ink-soft); }
+
+/* ====================== BOOK DIALOG ====================== */
+#bookDialog{ display:none; width:100%; height:100%; max-width:none; max-height:none;
+  margin:0; padding:20px; border:0; background:transparent; overflow:auto; }
+#bookDialog[open]{ display:flex; align-items:center; justify-content:center; }
+#bookDialog::backdrop{ background:rgba(23,24,28,.66); }
+.spread-shell{ width:100%; max-width:1080px; border:var(--stroke) solid var(--ink);
+  background:var(--paper-2); box-shadow:var(--hard-lg);
+  display:flex; flex-direction:column; max-height:min(93svh,940px); }
+#bookDialog[open] .spread-shell{ animation:spreadIn 290ms var(--e-out) both; }
+#bookDialog.closing .spread-shell{ animation:spreadOut 190ms var(--e-in) both; }
+@keyframes spreadIn{ from{opacity:0;transform:translateY(14px) scale(.97)} to{opacity:1;transform:none} }
+@keyframes spreadOut{ from{opacity:1;transform:none} to{opacity:0;transform:translateY(8px) scale(.985)} }
+.spread-head{ display:flex; align-items:center; gap:12px; padding:12px 12px 12px 18px;
+  border-bottom:var(--stroke) solid var(--ink); background:var(--paper-2); color:var(--ink); }
+.spread-head .swatch{ display:block; width:16px; height:16px; flex:none;
+  border:1.5px solid var(--ink); background:var(--spine,#333); }
+#dialogTitle{ font-family:'Outfit',system-ui,sans-serif; font-weight:600; font-size:17px;
+  margin:0; flex:1 1 auto; min-width:0; overflow-wrap:anywhere; }
+.icon-btn{ flex:none; width:44px; height:44px; display:inline-flex; align-items:center;
+  justify-content:center; border:var(--stroke) solid var(--ink); background:var(--paper-2);
+  color:var(--ink); cursor:pointer; transition:background var(--t-fast) linear; }
+.icon-btn:hover:not(:disabled){ background:var(--ink); color:var(--paper); }
+.icon-btn:disabled{ opacity:.35; cursor:not-allowed; }
+.icon-btn svg{ width:20px; height:20px; }
+.spread{ position:relative; display:grid; grid-template-columns:1fr; background:var(--page);
+  flex:1 1 auto; overflow:auto; }
+@media (min-width:768px){
+  .spread{ grid-template-columns:1fr 1fr; }
+  .spread::after{ content:''; position:absolute; top:0; bottom:0; left:50%; width:56px;
+    transform:translateX(-50%); pointer-events:none;
+    background:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(60,44,20,.14) 38%,
+      rgba(60,44,20,.30) 49%, rgba(23,18,8,.42) 50%, rgba(60,44,20,.30) 51%,
+      rgba(60,44,20,.14) 62%, rgba(0,0,0,0) 100%); }
+}
+.page{ padding:clamp(24px,3.6vw,52px); font-family:'Source Serif 4',Georgia,serif;
+  font-size:17px; line-height:1.68; color:#2A241A; min-height:320px; background:var(--page); }
+@media (min-width:768px){
+  .page-left { box-shadow:inset -10px 0 18px -14px rgba(40,28,10,.9); }
+  .page-right{ box-shadow:inset  10px 0 18px -14px rgba(40,28,10,.9); }
+}
+.page h3{ font-family:'Outfit',system-ui,sans-serif; font-size:21px; font-weight:600;
+  margin:0 0 12px; color:var(--ink); }
+.page p{ margin:0 0 1em; } .page p:last-child{ margin-bottom:0; } .page em{ font-style:italic; }
+.page .marginalia{ display:block; margin-top:20px; padding-top:12px;
+  border-top:1px solid var(--page-edge); font-style:italic; font-size:15px; color:#5A5040; }
+/* the things she says: Arabic, so right-to-left and its own face */
+.page .says{ list-style:none; margin:0; padding:0;
+  direction:rtl; text-align:right;
+  font-family:'Noto Naskh Arabic','Segoe UI',Tahoma,serif; }
+.page .says li{ font-size:clamp(19px,2.2vw,23px); line-height:1.9;
+  padding:0 0 8px; margin:0 0 12px;
+  border-bottom:1px solid var(--page-edge); }
+.page .says li:last-child{ border-bottom:0; margin-bottom:0; }
+/* a photograph mounted on a book page */
+.page img.plate{ display:block; margin:0 auto; max-width:100%;
+  max-height:min(58svh,520px); width:auto; height:auto;
+  border:2px solid var(--ink); background:var(--paper-2); }
+.turning{ animation:pageTurn 250ms var(--e-out) both; }
+@keyframes pageTurn{ from{opacity:0;transform:translateX(var(--turn-from,10px))} to{opacity:1;transform:none} }
+.spread-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:10px 12px; border-top:var(--stroke) solid var(--ink); background:var(--paper-2); }
+#spreadIndicator{ font-size:14px; font-weight:600; color:var(--ink-soft); }
+
+/* ====================== STAR MAP ====================== */
+.starmap{ display:grid; gap:26px; justify-items:center; }
+.sky{ width:min(460px,100%); aspect-ratio:1/1; background:#17181C;
+  border:var(--stroke) solid var(--ink); box-shadow:var(--hard-lg);
+  overflow:hidden; position:relative; }
+.sky svg{ display:block; width:100%; height:100%; }
+.sky .star{ fill:#FFF9F5; }
+.sky .cline{ stroke:rgba(255,249,245,.42); stroke-width:1; fill:none; }
+.sky .twinkle{ animation:twinkle 3.6s ease-in-out infinite alternate; animation-delay:var(--d); }
+@keyframes twinkle{ 0%{opacity:.45} 100%{opacity:1} }
+.sky-caption{ text-align:center; max-width:46ch; }
+.sky-caption .when{ font-family:'Outfit',system-ui,sans-serif; font-weight:800;
+  font-size:clamp(20px,2.6vw,26px); margin:0 0 6px; }
+.sky-caption p{ margin:0; color:var(--ink-soft); }
+
+/* ====================== WALLPAPER ====================== */
+.wp-layout{ display:grid; gap:28px; align-items:start; }
+@media (min-width:900px){ .wp-layout{ grid-template-columns:minmax(0,380px) minmax(0,1fr); gap:44px; } }
+.wp-frame{ background:var(--paper-2); border:var(--stroke) solid var(--ink);
+  box-shadow:var(--hard); padding:12px; display:flex; justify-content:center; }
+#wpCanvas{ display:block; max-width:100%; max-height:460px; width:auto; height:auto;
+  border:1px solid var(--rule); }
+.wp-group{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px; }
+.wp-opt{ min-height:44px; padding:0 16px; border:var(--stroke) solid var(--ink);
+  background:var(--paper-2); font-weight:600; cursor:pointer; box-shadow:var(--hard-sm);
+  transition:transform var(--t-fast) var(--e-out), box-shadow var(--t-fast) var(--e-out); }
+.wp-opt:hover{ transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink); }
+.wp-opt[aria-pressed="true"]{ background:var(--ink); color:var(--paper);
+  transform:translate(3px,3px); box-shadow:0 0 0 var(--ink); }
+.wp-opt:disabled{ opacity:.4; cursor:not-allowed; box-shadow:none; transform:none; }
+.sky-caption .since{ margin:0 0 6px; font-weight:600; }
+
+/* ====================== SEALED LETTER ====================== */
+.letter-stage{ display:grid; justify-items:center; gap:26px; }
+.envelope{ position:relative; width:min(420px,100%); aspect-ratio:3/2; border:0; padding:0;
+  background:none; cursor:pointer; }
+.env-body{ position:absolute; inset:0; background:var(--paper-2);
+  border:var(--stroke) solid var(--ink); box-shadow:var(--hard-lg); overflow:hidden; }
+.env-body::before,.env-body::after{ content:''; position:absolute; bottom:0; width:62%; height:100%;
+  border-top:2px solid rgba(23,24,28,.18); }
+.env-body::before{ left:0; clip-path:polygon(0 0,100% 100%,0 100%); }
+.env-body::after{ right:0; clip-path:polygon(100% 0,100% 100%,0 100%); }
+.env-flap{ position:absolute; left:-2px; right:-2px; top:-2px; height:64%;
+  background:var(--fc); clip-path:polygon(0 0,100% 0,50% 100%);
+  transform-origin:top center; transform:rotateX(0deg);
+  transition:transform 620ms var(--e-out); z-index:3;
+  border-top:var(--stroke) solid var(--ink); }
+.envelope[aria-expanded="true"] .env-flap{ transform:rotateX(180deg); }
+.env-seal{ position:absolute; left:50%; top:58%; width:62px; height:62px; z-index:4;
+  transform:translate(-50%,-50%); background:var(--sc); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Outfit',system-ui,sans-serif; font-weight:800; font-size:24px;
+  border:var(--stroke) solid var(--ink); box-shadow:var(--hard-sm);
+  transition:opacity 300ms var(--e-out), transform 400ms var(--e-in); }
+.envelope[aria-expanded="true"] .env-seal{ opacity:0; transform:translate(-50%,-50%) scale(.4) rotate(-25deg); }
+.env-hint{ position:absolute; left:0; right:0; bottom:10%; z-index:5; text-align:center;
+  font-weight:600; font-size:15px; color:var(--ink-soft); }
+.envelope[aria-expanded="true"] .env-hint{ opacity:0; transition:opacity 200ms linear; }
+.letter{ width:min(680px,100%); background:var(--paper-2);
+  border:var(--stroke) solid var(--ink); box-shadow:var(--hard-lg);
+  background-image:repeating-linear-gradient(180deg, transparent 0 31px, var(--rule) 31px 32px);
+  padding:clamp(28px,5vw,52px); opacity:0; transform:translateY(-24px); }
+.letter[data-open="true"]{ opacity:1; transform:none;
+  transition:opacity 520ms var(--e-out) 260ms, transform 620ms var(--e-out) 260ms; }
+.letter p{ font-family:'Source Serif 4',Georgia,serif; font-size:clamp(17px,2vw,20px);
+  line-height:32px; margin:0 0 32px; }
+.letter .signoff{ font-family:'Work Sans',sans-serif; font-size:16px; color:var(--ink-soft);
+  margin:0; line-height:32px; }
+.letter .sign{ font-family:'Outfit',system-ui,sans-serif; font-weight:600;
+  font-size:19px; margin:0; line-height:32px; }
+
+/* ==================== REDUCED MOTION ==================== */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; }
+  .book:hover,.book:focus-visible{ transform:none; }
+  .pile-card:not([disabled]):hover{ transform:rotate(var(--rot,0deg)); }
+  .btn:hover:not(:disabled),.hero-scroll:hover{ transform:none; }
+  .cake .candle-g,.cake .flame{ opacity:1; transform:none; animation:none; }
+  .cake{ opacity:1; transform:none; }
+  .note-inner{ transition:none; }
+  .note[aria-expanded="true"] .note-inner{ transform:none; }
+  .note[aria-expanded="true"] .note-front{ opacity:0; }
+  .note[aria-expanded="true"] .note-back{ transform:none; }
+  .letter[data-open="true"]{ opacity:1; transform:none; }
+  .sky .twinkle{ animation:none; opacity:.9; }
+}
+
+</style>
+</head>
+<body>
+
+<a class="skip" href="#hero">Skip to content</a>
+<svg id="confetti" aria-hidden="true" preserveAspectRatio="xMidYMid slice"></svg>
+<canvas id="burst" aria-hidden="true"></canvas>
+<svg id="clipDefs" width="0" height="0" aria-hidden="true" style="position:absolute"></svg>
+
+<main>
+  <!-- 1. HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-inner">
+      <svg class="hero-ribbon" viewBox="0 0 190 26" fill="none" aria-hidden="true">
+        <path d="M2,13 Q26,0 50,13 T98,13 T146,13 T188,13" stroke-width="4" pathLength="1"
+              stroke-linecap="round" id="heroRibbonPath"/>
+      </svg>
+      <h1 style="margin:0">
+        <span class="hero-name" id="heroName"></span>
+        <span class="hero-age">
+          <span class="outline" id="heroAgeOutline" aria-hidden="true"></span>
+          <span class="fill" id="heroAgeFill"></span>
+        </span>
+      </h1>
+      <p class="hero-line" id="heroLine"></p>
+      <a class="hero-scroll" href="#puzzle" id="heroScroll">
+        <span>Start with the picture</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- 2. PUZZLE -->
+  <section class="section" id="puzzle">
+    <div class="wrap">
+      <div class="puzzle-layout">
+        <div>
+          <div class="puzzle-frame">
+            <div id="puzzleGrid" role="group" aria-labelledby="puzzleHeading" aria-describedby="puzzleHelp"></div>
+            <div id="peekLayer" aria-hidden="true"></div>
+          </div>
+          <div id="photoWarn" hidden></div>
+        </div>
+        <div>
+          <h2 id="puzzleHeading"></h2>
+          <p class="lede" id="puzzleLede"></p>
+          <p id="puzzleHelp" class="sr-only"></p>
+          <button type="button" class="btn" id="peekBtn">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span id="peekBtnLabel">Peek at the photo</span>
+          </button>
+          <p class="puzzle-status" id="puzzleStatus" role="status" aria-live="polite"></p>
+          <div class="cake-stage">
+            <div class="cake" id="cake"></div>
+            <div class="wish" id="wish" hidden>
+              <p class="hand" id="wishText"></p>
+              <div class="wish-row">
+                <button type="button" class="btn btn-solid" id="blowBtn">Blow them out</button>
+                <button type="button" class="btn" id="micBtn" hidden>Use my microphone</button>
+              </div>
+              <div id="micMeter" hidden><i id="micLevel"></i></div>
+              <p class="sr-only" id="blowStatus" role="status" aria-live="polite"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. FIVE YEARS -->
+  <section class="section" id="years" style="padding-top:0">
+    <div class="wrap">
+      <h2 id="yearsHeading"></h2>
+      <p class="lede" id="yearsLede"></p>
+      <div class="years" id="yearsList"></div>
+    </div>
+  </section>
+
+  <!-- 4. 21 NOTES -->
+  <section class="section" id="notes" style="padding-top:0">
+    <div class="wrap">
+      <h2 id="notesHeading"></h2>
+      <p class="lede" id="notesLede"></p>
+      <div class="notes" id="notesGrid"></div>
+      <p class="notes-count" id="notesCount" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- 5. THE PILE -->
+  <section class="section" id="pile" style="padding-top:0">
+    <div class="wrap">
+      <h2 id="pileHeading"></h2>
+      <p class="lede" id="pileLede"></p>
+      <div class="pile-stage" id="pileStage" role="group" aria-labelledby="pileHeading"></div>
+      <div class="pile-bar">
+        <button type="button" class="icon-btn" id="pilePrev" aria-label="Previous photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <span id="pileCount" role="status" aria-live="polite"></span>
+        <button type="button" class="icon-btn" id="pileNext" aria-label="Next photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+      <p class="pile-hint" id="pileHint"></p>
+      <p class="pile-note" id="pileNote" hidden></p>
+    </div>
+  </section>
+
+  <!-- 6. BOOKSHELF -->
+  <section class="section" id="shelf" style="padding-top:0">
+    <div class="wrap">
+      <h2 id="shelfHeading"></h2>
+      <p class="lede" id="shelfLede"></p>
+      <div class="shelf-unit">
+        <div class="shelf">
+          <ul class="books" id="booksList"></ul>
+          <div class="shelf-plank" aria-hidden="true"></div>
+        </div>
+      </div>
+      <p class="shelf-hint" id="shelfHint"></p>
+    </div>
+  </section>
+
+  <!-- 7. RHYTHM -->
+  <section class="section" id="rhythm" style="padding-top:0">
+    <div class="wrap">
+      <h2 id="rhythmHeading"></h2>
+      <p class="lede" id="rhythmLede"></p>
+      <div class="ecg-wrap"><div class="ecg-paper" id="ecgPaper"></div></div>
+      <p class="ecg-caption" id="ecgCaption"></p>
+    </div>
+  </section>
+
+  <!-- 8. STAR MAP -->
+  <section class="section" id="sky" style="padding-top:0">
+    <div class="wrap">
+      <h2 id="skyHeading"></h2>
+      <p class="lede" id="skyLede"></p>
+      <div class="starmap">
+        <div class="sky" id="skyDisc"></div>
+        <div class="sky-caption">
+          <p class="when" id="skyWhen"></p>
+          <p class="since" id="skySince"></p>
+          <p id="skyCaption"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. WALLPAPER -->
+  <section class="section" id="wallpaper" style="padding-top:0">
+    <div class="wrap">
+      <h2 id="wpHeading"></h2>
+      <p class="lede" id="wpLede"></p>
+      <div class="wp-layout">
+        <div class="wp-frame"><canvas id="wpCanvas"></canvas></div>
+        <div>
+          <div class="wp-group" id="wpSizes" role="group" aria-label="Wallpaper size"></div>
+          <button type="button" class="btn btn-solid" id="wpDownload">Download wallpaper</button>
+          <p class="sr-only" id="wpStatus" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. SEALED LETTER -->
+  <section class="section" id="letter" style="padding-top:0">
+    <div class="wrap">
+      <h2 id="letterHeading"></h2>
+      <p class="lede" id="letterLede"></p>
+      <div class="letter-stage">
+        <button type="button" class="envelope" id="envelope" aria-expanded="false" aria-controls="letterCard">
+          <span class="env-body" aria-hidden="true"></span>
+          <span class="env-flap" aria-hidden="true"></span>
+          <span class="env-seal" id="envSeal" aria-hidden="true"></span>
+          <span class="env-hint" id="envHint">tap to open</span>
+        </button>
+        <article class="letter" id="letterCard" data-open="false" hidden></article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<dialog id="bookDialog" aria-labelledby="dialogTitle">
+  <div class="spread-shell" id="spreadShell">
+    <div class="spread-head">
+      <span class="swatch" id="dialogSwatch" aria-hidden="true"></span>
+      <h2 id="dialogTitle"></h2>
+      <button type="button" class="icon-btn" id="closeBtn" aria-label="Close book">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="spread" id="spread">
+      <div class="page page-left" id="pageLeft"></div>
+      <div class="page page-right" id="pageRight"></div>
+    </div>
+    <div class="spread-foot">
+      <button type="button" class="icon-btn" id="prevBtn" aria-label="Previous page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span id="spreadIndicator" role="status" aria-live="polite"></span>
+      <button type="button" class="icon-btn" id="nextBtn" aria-label="Next page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+/* ============================================================================
+   ██  CONFIG  ██   Everything you need to edit lives in this object.
+   Nothing below this block needs to change.
+   ============================================================================ */
+const CONFIG = {
+
+  /* --- the basics ------------------------------------------------------- */
+  herName: "Lulu",
+  myName:  "Mohamed",
+
+  /* The page's colours: confetti, the hero word, the notes, the flowers,
+     the heartbeat, the colouring swatches. The books have their own,
+     more book-like colours further down. */
+  /* the confetti burst when the page opens — set to false to turn it off */
+  confettiBurst: true,
+
+  palette:      ["#E8557E","#A96BD8","#F0B93B","#4FBE96","#5B8DE8","#F2843C"],
+
+  /* photo.jpg sits beside this file. Any shape works — it is cropped to fill,
+     never squashed. photoFrame is the shape of the puzzle; photoFocus picks
+     which part survives the crop ("50% 30%" keeps more of the top). */
+  photo:      "./photos/photo.jpg",
+  photoFrame: "3 / 4",
+  photoFocus: "50% 56%",
+
+  /* The day it started. Everything counted from it — the star map, the
+     "together" line, the wallpaper — updates itself from this one value. */
+  anniversary: "2021-02-27",
+
+  /* --- 1. hero ---------------------------------------------------------- */
+  hero: {
+    age:  "twenty-one",
+    line: "Five years of knowing you, and I still think the best thing I ever did was pay attention at the right moment."
+  },
+
+  /* --- 2. puzzle + cake ------------------------------------------------- */
+  puzzle: {
+    heading: "Us, in nine pieces",
+    lede:    "Tap one piece, then tap another, and they'll trade places. Get them all home and something happens.",
+    help:    "A three by three photo jigsaw. Activate one piece to select it, then activate a second piece to swap the two.",
+    solved:  "There we are. Happy birthday."
+  },
+  cake: {
+    wish:    "Twenty-one candles. Make a wish first.",
+    blowBtn: "Blow them out",
+    micBtn:  "Use my microphone",
+    micHint: "Blow towards your mic…",
+    done:    "Wish made. I hope you get it."
+  },
+
+  /* --- 3. the five years ------------------------------------------------ */
+  years: {
+    heading: "Sixteen to twenty-one",
+    lede:    "I have known you for five birthdays now. Here is what I remember of each one.",
+    stops: [
+      { age:"16", text:"The year I met you. I Loved how different the image of you in my head was." },
+      { age:"17", text:"Our first hangout toghether at the mall." },
+      { age:"18", text:"The year everything got serious exams, decisions, the medicine plan." },
+      { age:"19", text:"The hardest year, and still passed through it." },
+      { age:"20", text:"The year I found out that i love you more than i think." },
+      { age:"21", text:"Today, can't express how much i'm Happy. Welcome to twenty-one ya LULU." }
+    ]
+  },
+
+  /* --- 4. twenty-one notes ----------------------------------------------
+     Exactly one per year of her life. Keep each one short — roughly a
+     sentence — because it has to fit on a small folded card.
+     -------------------------------------------------------------------- */
+  notes: {
+    heading: "Twenty-one small things",
+    lede:    "These are some of the things i adore about you. Tap on each one to figure out.",
+    counter: "opened",
+    items: [
+      "You are the only person who can make me smile when i am mad at you.",
+      "Your jealousy turn into anger.",
+      "Your eyes closes when you smile or laugh",
+      "You keep deyning, until i tell you swear.",
+      "You care about the people you love speacially SMSM.",
+      "You don't like coffee but you still drink it with me.",
+      "Your KISSES, (i want one 😁)",
+      "Your concern about me.",
+      "You give the things you love all you energy.",
+      "You have the most cutest dimples ever.",
+      "You are the most clever desert chef i've ever seen.",
+      "You make a hangout plan and then abandon it beautifully.",
+      "The common scar we have above our eye.",
+      "Your Eyes, its not just pretty, it make me get lost just be looking at them.",
+      "Your are so kind and lovable.",
+      "You are always with me even when you are not infront of me.",
+      "I love how you raise your eyebrows when you take a video note for me.",
+      "I love how you see me Picky, speacially about the food.",
+      "I love how you call me Hamody.",
+      "You will be a very good doctor.",
+      "You are the best thing about being twenty-one, and I would know."
+    ]
+  },
+
+  /* --- 5. the pile of photos -------------------------------------------
+     Put the image files next to this page (a photos/ folder keeps it tidy)
+     and list them here. Any shape works — each one is cropped to fill, never
+     squashed. Add as many as you like; only the top few are ever drawn, so
+     a long list costs nothing.
+     -------------------------------------------------------------------- */
+  gallery: {
+    heading: "A pile of you",
+    lede:    "Prints, in no particular order. Tap the top one and it goes to the back.",
+    hint:    "Tap the photo, or use the arrows. Arrow keys work too.",
+    counter: "of",
+    missingNote: "Some photos are missing. Put the image files where the src paths below point — a photos/ folder next to this page is easiest — then refresh.",
+    photos: [
+      { src: "./photos/28048719-d4f0-4e67-af5d-0b490f670cc0.jpg",
+        caption: "Your First Birthday." },
+      { src: "./photos/photo.jpg",
+        caption: "Our Favorite Photo, wish all the times you are beside me." },
+      { src: "./photos/71920e1e-311b-4712-b3fc-c1e423aa7250.jpg",
+        caption: "Barakty" },
+      { src: "./photos/be66c571-6757-4414-8823-45fa5c875542.jpg",
+        caption: "The best Coffee, i've ever had." },
+      { src: "./photos/WhatsApp Image 2026-09-10 at 3.22.50 PM.jpeg",
+        caption: "The end of the last Anatomy Module, looking great as usual." },
+      { src: "./photos/47f33e4c-0be9-41e3-a19d-601e25ecd3b9.jpg",
+        caption: "The prettiest Doctor i've ever seen." },
+      { src: "./photos/a62c9772-b4c3-4c99-9e92-e227c94a8838.jpg",
+        caption: "The Smartest Semi-Senior ever." },
+      { src: "./photos/WhatsApp Image 2026-09-10 at 3.22.50 PM (2).jpeg",
+        caption: "You know how much i love this photo." },
+      { src: "./photos/d2d4d568-71eb-412e-bbdc-ef4caa663bce.jpg",
+        caption: "Added her just because you lover her." },
+      { src: "./photos/bcd38c05-adaf-4f0e-8ce7-44cb8096a7e7.jpg",
+        caption: "I love how identical you two are. She's always remind me of you." },
+      { src: "./photos/7a63b2a8-cf2c-471a-a26d-892c3813a2a4.jpg",
+        caption: "YOU LOOK GORGEOUS" },
+      { src: "./photos/735b01df-c8a4-4d8d-831b-808db2f2768d.jpg",
+        caption: "Makeup just on another level, even though i don't like it." },
+      { src: "./photos/WhatsApp Image 2026-09-10 at 3.22.50 PM (1).jpeg",
+        caption: "MOZZZA." },
+      { src: "./photos/4f6288b5-8e22-4493-ab68-689d78714024.jpg",
+        caption: "Don't wear this shirt again, you know why. 😁" },
+      { src: "./photos/WhatsApp Image 2026-09-10 at 3.22.50 PM (4).jpeg",
+        caption: "Peace sign, full flash. Composition was not the goal." },
+      { src: "./photos/5245ce9f-60f4-4295-a31c-124e0fef341a.jpg",
+        caption: "You made everyone look underdressed." },
+      { src: "./photos/c0a76ada-2b3e-4ac0-876e-fcd8debfc106.jpg",
+        caption: "My weak point." },
+      { src: "./photos/983dc96e-df26-48b0-9153-bc21fbd4fbba.jpg",
+        caption: "Just ready for a kiss. 😁😁😁😁😁" },
+      { src: "./photos/7e834cea-e76c-4717-b2e7-10b1af93a398.jpg",
+        caption: "I can't stand Those EYES i swear." },
+      { src: "./photos/54fec007-5dc0-4ac9-9a32-3ff57add98f4.jpg",
+        caption: "Occasional photo." },
+      { src: "./photos/WhatsApp Image 2026-09-10 at 3.22.50 PM (3).jpeg",
+        caption: "Only the eyes. Still made my whole day." },
+      { src: "./photos/8ae55744-ff1d-4a9e-8136-7b0bcd66a525.jpg",
+        caption: "LOVE YOU SO MUCHHHHH." },
+    ]
+  },
+
+  /* --- 5. bookshelf ----------------------------------------------------- */
+  shelf: {
+    heading: "Six books I wrote for you",
+    lede:    "Short ones. You can read them in any order, which I know will bother you slightly.",
+    hint:    "Pick a spine to open it. Arrow keys turn the pages. Escape closes."
+  },
+
+  /* --- 7. the rhythm (ECG strip) ---------------------------------------- */
+  rhythm: {
+    heading: "Sinus rhythm",
+    lede:    "You will read a hundred thousand of these. This one is twenty-one beats long, and every one of them is for you.",
+    left:    "Lead II · 25 mm/s · 10 mm/mV",
+    right:   "Rate: 21 bpy · Rhythm: regular · Impression: <b>in love</b>",
+    beats:   21,
+    colorIndex: 0
+  },
+
+  /* --- 9. star map ------------------------------------------------------
+     seed: any number. Change it to redraw a different sky.
+     -------------------------------------------------------------------- */
+  sky: {
+    heading: "The sky that night",
+    lede:    "Roughly what was overhead on the night it started. The date below is the one everything on this page counts from.",
+    label:   "The night it started",
+    caption: ""
+  },
+
+  /* --- the wallpaper ---------------------------------------------------- */
+  wallpaper: {
+    heading:  "Take it with you",
+    lede:     "Made right here in your browser, at full resolution. Pick a size and save it.",
+    download: "Download wallpaper",
+    sizes: [
+      { label: "Phone",   w: 1179, h: 2556 },
+      { label: "Tablet",  w: 1640, h: 2360 },
+      { label: "Desktop", w: 2560, h: 1440 }
+    ],
+    saved: "Saved to your downloads."
+  },
+
+  /* --- 10. the sealed letter (this is the closing) ----------------------- */
+  letter: {
+    heading: "One last thing",
+    lede:    "This one is sealed. You have to open it.",
+    hint:    "tap to open",
+    seal:    "Z",
+    body: [
+      "There is a version of this page where I just say happy birthday and leave it there. This is not that version, because you are not that kind of person and this is not that kind of year.",
+      "Twenty-one looks good on you. I have watched five of these now and this is the best one."
+    ],
+    signoff:   "all my love,",
+    signature: "Hamody"
+  },
+
+  /* --- the six books ----------------------------------------------------
+     title  : text on the spine (it runs vertically)
+     color  : the spine colour. THESE SIX COLOURS COLOUR THE WHOLE PAGE —
+              confetti, the hero word, the notes, the flowers, everything.
+     height : 0.65–1.0, relative spine height (varied heights look right)
+     pages  : any number. On desktop they pair into two-page spreads;
+              on mobile you get one page at a time. Plain text or HTML.
+     -------------------------------------------------------------------- */
+  books: [
+    {
+      title: "LULU", author: "Mohamed", publisher: "Z.",
+      color: "#EDE6D8", height: 1.0, width: 0.85,
+      pages: [
+        "<h3>Chapter 21 — The Girl I Chose</h3><p>If my life were a book, there is one name I know would never be just a name written somewhere between the pages. It would be the title of a whole part of my life. That name would be Lulu.</p>",
+        "<p>Today, you turn twenty-one, and somehow that number feels strange to me. Not because twenty-one is old, but because I still remember the girl I met when she was sixteen. Six years have passed since then, and when I look back at everything that happened between those two versions of you, I realize that I didn’t just watch you grow up. I grew with you. We changed, we learned, we made mistakes, we laughed, we fought, we got through things we never thought we’d have to face, and somehow, through all of it, we kept finding our way back to each other.</p>",
+        "<p>Sometimes I think the beginning of our story is almost too ordinary for what it eventually became. We were just two people from the same school. I was that annoying guy who kept taking your calculator, and you were the girl with the eyes I couldn’t stop noticing. I don’t think either of us could have imagined that those little moments would eventually become memories I’d carry with me for years.</p>",
+        "<p>Then came PUBG, and somehow, even there, we found our own little way of being together. We would leave the team and play with each other, and eventually it stopped being about the team at all. It was just us. Two people playing together, talking, laughing, annoying each other, and slowly creating something that neither of us had a name for yet. Looking back, maybe that was one of the first little chapters of us.</p>",
+        "<p>And somewhere along the way, I fell in love with you.</p><p>I wish I could tell you exactly when it happened, but I can’t. Maybe it wasn’t one particular moment. Maybe it was built from hundreds of tiny moments that I didn’t realize were important at the time. Your laugh. Your eyes. Your personality. The way you annoy me and somehow make me love you even more because of it. The little things you do without thinking. The way you can be unbelievably stubborn and unbelievably sweet at the same time. Somehow, I fell in love with all of it.</p>",
+        "<p>Especially your eyes.</p><p>I mean, come on, Lulu. What did you expect? Those eyes were never going to let me leave peacefully. 😂</p><p>But there is something about us that goes deeper than all of that. Something I’ve never really known how to explain properly. I call it our special connection, because I don’t know what else to call it.</p>",
+        "<p>It’s the feeling of knowing something is wrong with you before you tell me. It’s thinking about the same thing at the same time. It’s saying the same words without planning them. It’s understanding what the other person means even when they don’t explain themselves. It’s being able to hear something in your voice that other people might completely miss. And sometimes it’s simply that strange feeling that, even when we are standing on opposite sides of an argument, some part of me still knows exactly where I belong.</p><p>With you.</p>",
+        "<p>We’ve been through more than I ever imagined two people could go through together. We’ve had our beautiful moments, and we’ve had moments that hurt. We’ve had arguments, misunderstandings, difficult conversations, and times when everything felt much more complicated than it should have been. But somehow, underneath all of that, there has always been something stronger.</p><p>The truth that neither of us seems able to escape is that we don’t really see ourselves with anyone else.</p>",
+        "<p>Maybe that’s why, after everything, I realized something I can’t ignore anymore: I don’t feel completely whole without you.</p><p>You are not just someone I love. You’ve become part of the way I see my life. Part of my memories, part of my present, and someone I naturally imagine when I think about the future.</p><p>And while I’m talking about the future, I need you to know how proud I am of you.</p>",
+        "<p>You’ve made it through three years of Medicine, and I know it hasn’t been easy. I’ve watched you work, study, get exhausted, deal with pressure, go through exams, and start training in hospitals. I’ve seen how hard you’ve worked for everything you’ve achieved, and I genuinely admire that about you. You’re entering your fourth year now, and sometimes I look at you and realize that the sixteen-year-old girl I met is slowly becoming the woman she always had the potential to be.</p>",
+        "<p>You’re hardworking. You’re kind. You’re beautiful. And, in my eyes, you have the heart and the qualities of someone who could one day be an amazing wife and an even better partner in life.</p><p>And yes, before you get too emotional reading this, remember that you still owe me a kiss. That’s the deal. 😂❤️</p><p>But jokes aside, there is one thing I want you to remember more than anything else.</p>",
+        "<p>I have never regretted trying for you.</p><p>Not once.</p><p>And if I were given the impossible chance to go back to the beginning, knowing everything I know now — knowing every argument we’d have, every difficult moment, every misunderstanding, every time we’d hurt each other, and every obstacle we’d have to face — I would still choose to try.</p>",
+        "<p>I wouldn’t try a million times.</p><p>I’d try a billion.</p><p>Because knowing the ending is not guaranteed doesn’t make the story any less worth writing. And knowing how much you mean to me makes every chapter we’ve had worth it.</p>",
+        "<p>So today, on your twenty-first birthday, I don’t just want to wish you a happy birthday. I want to celebrate the girl I met at sixteen, the girl whose calculator I kept stealing, the girl who became my PUBG partner, my favorite person to annoy, the girl whose eyes caught my attention before I even understood why, and the woman who has somehow remained the person my heart keeps choosing.</p><p>This is Chapter 21.</p>",
+        "<p>You’re twenty-one now, you’re entering your fourth year of Medicine, you’re growing into the woman you’re meant to become, and somehow I’m lucky enough to still be here, writing another chapter with you.</p><p>I don’t know exactly what the next pages will look like. I don’t know how many unexpected turns are waiting for us, or how many difficult chapters we’ll still have to read together. But if I get to choose, I know exactly who I want beside me while we read them.</p><p>You.</p>",
+        "<p>And maybe one day, many years from now, we’ll open this book again and laugh at how young we were. We’ll laugh about PUBG, the calculator, our stupid arguments, our inside jokes, and the fact that I somehow needed an entire chapter just to ask for a kiss.</p><p>And I’ll probably still be telling you that your eyes are beautiful.</p><p>Because some things, I hope, never change.</p>",
+        "<p>Happy 21st birthday, Lulu.</p><p>Here’s to another chapter, another year, another thousand memories, and hopefully a very, very long book.</p><span class='marginalia'>I love you. ❤️</span>"
+      ]
+    },
+    {
+      title: "Things You Say", author: "Mohamed", publisher: "Z.",
+      color: "#22304F", height: 0.84, width: 1.0,
+      pages: [
+        "<h3>Your greatest hits</h3><ul class='says' dir='rtl' lang='ar'><li>حمودي</li><li>حماده</li><li>اتلم</li><li>عيب</li><li>بشمهندسي</li><li>عيوني</li><li>حبيبي</li></ul>",
+        "<ul class='says' dir='rtl' lang='ar'><li>راح و جه</li><li>براااحتك</li><li>انا داخله انام</li><li>لا مش هحلف</li><li>نفسي ف مزرعه</li><li>بحبك</li><li>دماغي مصدعه اول ما بتصحي</li></ul>",
+        "<ul class='says' dir='rtl' lang='ar'><li>متشربش قهوه بعد الاكل</li><li>ي مدمن</li><li>الدكتوره دي هتجنني</li><li>مش هجيب اتنا شر عيل</li><li>متعصبنيش</li><li>هتجننينييي</li><li>نفسي تسمع الكلام</li></ul>",
+        "<ul class='says' dir='rtl' lang='ar'><li>ايه الشطاره دي يبشمهندس</li><li>قمر يحمودي</li><li>بسنت نايمه</li><li>وحشتني ي حموددي</li><li>لا (الرد عالبوسه)</li><li>شطور يحموودي</li><li>الله يحرق بقي سيف</li></ul>",
+        "<ul class='says' dir='rtl' lang='ar'><li>هقوم اعمل بيض</li><li>سندوتشات جبنه</li><li>ماشي ي عنصري</li><li>هنخيب ولا ايه يحمودي</li><li>دنتا حمودي نسيت ولا ايه</li><li>بحبك ي سفاح</li><li>هححححح</li></ul>"
+      ]
+    },
+    {
+      title: "Our Memories", author: "Mohamed", publisher: "Z.",
+      color: "#7B3B52", height: 0.93, width: 0.92,
+      pages: [
+        "<img class='plate' src='./Memos/1.jpg' loading='lazy' alt='The two of us at the mall, in front of the lit holiday trees'>",
+        "<img class='plate' src='./Memos/2.jpg' loading='lazy' alt='Looking down at our four feet on a gravel path'>",
+        "<img class='plate' src='./Memos/3.jpg' loading='lazy' alt='Our two wrists side by side, his black watch and her gold one'>",
+        "<img class='plate' src='./Memos/4.jpg' loading='lazy' alt='A selfie outdoors, with a tall sand-coloured building behind us'>",
+        "<img class='plate' src='./Memos/5.jpg' loading='lazy' alt='Our two shadows, standing side by side on the pavement'>",
+        "<img class='plate' src='./Memos/6.jpg' loading='lazy' alt='A selfie in the car, her head resting on my shoulder'>",
+        "<img class='plate' src='./Memos/7.jpg' loading='lazy' alt='A selfie indoors, her holding up a peace sign'>",
+        "<img class='plate' src='./Memos/8.jpg' loading='lazy' alt='A close selfie of the two of us, both smiling'>",
+        "<img class='plate' src='./Memos/9.jpg' loading='lazy' alt='Our watches next to each other again, gold and steel'>",
+        "<img class='plate' src='./Memos/10.jpg' loading='lazy' alt='The two of us in front of the wooden doors, pointing at each other'>"
+      ]
+    },
+    {
+    title: "The Little Things", author: "Mohamed", publisher: "Z.",
+    color: "#4A6B5A", height: 0.88, width: 0.9,
+    pages: [
+      "<h3>Six years of noticing</h3><p>The things I love about you aren't always the big things. Sometimes they're the things you don't even realize you do. The way you say my name. The way your voice changes when you're excited. The way you pretend you don't care when I know you do.</p>",
+      "<p>You always say you're going to sleep, and then you keep talking for another twenty minutes anyway. Every single time. I've stopped believing you when you say 'براحتك' too, because I know exactly what it means when you say it that way.</p>",
+      "<p>You get annoyed at me for the smallest things, and somehow even that is something I've gotten used to loving. Your 'دماغي مصدعه' the second you wake up. The way you say 'لا' when I ask for a kiss, and the way that 'لا' never actually means no.</p>",
+      "<p>You talk faster when you're excited about something, like the words can't keep up with how much you want to say. You worry about the people you love more than you worry about yourself, even when you're the one who's exhausted.</p>",
+      "<p>You can be incredibly sweet and incredibly annoying within the same five minutes, and somehow both of those things are just you. 😂</p><p>After six years, I've realized that loving someone isn't only about remembering the big moments. It's about noticing the little things, too. The habits you've had for years that became familiar to me without either of us noticing when it happened.</p>",
+      "<p>I don't think you know how many of these I've kept.</p><span class='marginalia'>I remember all of it, حمودي.</span>"
+    ]
+    },
+    {
+      title: "What I Notice", author: "Mohamed", publisher: "Z.",
+      color: "#A8323F", height: 0.9, width: 1.12,
+      pages: [
+        "<h3>Things she doesn’t know I clocked</h3><p>How she reads the last page first. How she straightens a picture frame in someone else’s house.</p>",
+        "<p>This is the one that will get her. Be exact.</p>",
+        "<h3>And this</h3><p>Keep a page in reserve for the thing that is hard to say plainly.</p>",
+        "<p>Then say it plainly anyway.</p>"
+      ]
+    },
+    {
+      title: "Twenty-One", author: "Mohamed", publisher: "Z.",
+      color: "#D9552F", height: 0.8, width: 0.95,
+      pages: [
+        "<h3>Happy 21st Birthday, my love ❤️</h3><p>It's honestly hard to believe that I've known you since you were 16, and now you're turning 21. Five years have passed, and when I think about everything that happened between then and now, I realize how many versions of you I've gotten to know and love.</p>",
+        "<p>I've watched you grow from that 16-year-old girl I first knew into the woman you are today stronger, smarter, more independent, and somehow even more beautiful. And one of the things I admire most about you is how hard you work for your dreams.</p><p>Medicine isn't easy, and I know there are days when you feel exhausted, overwhelmed, or unsure of yourself. But I hope you always remember how capable you are and how proud you should be of everything you've already accomplished.</p>",
+        "<p>Twenty-one feels like such a special age. You're stepping into a completely new chapter of your life, with so many things waiting for you more dreams, more achievements, more adventures, and hopefully a lot of happiness.</p><p>And if there's one thing I want you to know on your birthday, it's that I'm genuinely grateful that our paths crossed all those years ago. Out of all the people we could have met in this life, somehow I got to meet you at 16 and watch you become the person you are today. That will always mean something special to me.</p>",
+        "<p>I hope this year brings you closer to becoming the doctor you dream of being, but more importantly, I hope it brings you peace, happiness, confidence, and moments where you can stop worrying about everything and just enjoy being you.</p><p>Never forget the girl you were at 16, and never underestimate the woman you're becoming at 21.</p>",
+        "<p>Happy birthday to my favorite person, my future doctor, and the girl who has been a part of my life for five beautiful years.</p><p>Happy 21st, my love. ❤️</p><p>I hope this year is as beautiful as you deserve it to be.</p><span class='marginalia'>I love you.</span>"
+      ]
+    }
+  ]
+};
+/* ============================================================================
+   ██  END CONFIG  ██
+   ============================================================================ */
+
+
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (n, a) => { const e = document.createElementNS(NS, n);
+    for (const k in a) e.setAttribute(k, a[k]); return e; };
+  const PALETTE = CONFIG.palette || CONFIG.books.map(b => b.color);
+
+  /* deterministic pseudo-random, so confetti and stars never reshuffle */
+  function rng(seed) {
+    let s = seed >>> 0;
+    return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+  }
+
+  const lin = (c) => { c /= 255; return c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); };
+  function lumOf(hex) {
+    const m = /^#?([0-9a-f]{6})$/i.exec(String(hex).trim());
+    if (!m) return 0;
+    const n = parseInt(m[1], 16);
+    return 0.2126*lin((n>>16)&255) + 0.7152*lin((n>>8)&255) + 0.0722*lin(n&255);
+  }
+  /* pick white or deep plum for text on an arbitrary spine, whichever wins */
+  const DEEP = '#17181C', DEEP_L = lumOf(DEEP);
+  function readableOn(hex) {
+    const L = lumOf(hex);
+    return (1.05/(L+0.05)) >= ((L+0.05)/(DEEP_L+0.05)) ? '#FFFFFF' : DEEP;
+  }
+  /* gold foil on a dark cloth, dark bronze on a pale one — both clear 6:1 */
+  const foilFor = (hex) => (lumOf(hex) > 0.30 ? '#6B4E22' : '#E1C07C');
+
+  /* ======================================================================
+     CONFETTI — the page's background, scattered from the six spine colours
+     ====================================================================== */
+  (function confetti() {
+    const svg = $('confetti');
+    svg.setAttribute('viewBox', '0 0 1000 1000');
+    const r = rng(20260908);
+    for (let i = 0; i < 78; i++) {
+      const c = PALETTE[i % PALETTE.length];
+      const x = r() * 1000, y = r() * 1000, rot = r() * 360;
+      const kind = r();
+      let node;
+      if (kind < 0.42) {
+        node = el('rect', { x: x, y: y, width: 4 + r()*5, height: 9 + r()*9, rx: 2.5 });
+      } else if (kind < 0.72) {
+        node = el('circle', { cx: x, cy: y, r: 2.5 + r()*3.5 });
+      } else {
+        node = el('path', { d: 'M' + x + ',' + y + ' q7,-8 14,0', fill: 'none',
+                            stroke: c, 'stroke-width': 3, 'stroke-linecap': 'round' });
+      }
+      if (kind >= 0.72) node.setAttribute('opacity', 0.16 + r()*0.10);
+      else { node.setAttribute('fill', c); node.setAttribute('opacity', 0.13 + r()*0.10); }
+      node.setAttribute('transform', 'rotate(' + rot.toFixed(1) + ' ' + x.toFixed(1) + ' ' + y.toFixed(1) + ')');
+      svg.appendChild(node);
+    }
+  })();
+
+  /* ======================================================================
+     THE POPPERS — a confetti burst when the page opens. Runs on a canvas,
+     never takes pointer events, and shuts the loop down once the last
+     piece has fallen so it costs nothing for the rest of the visit.
+     ====================================================================== */
+  (function burst() {
+    const cv = $('burst');
+    if (CONFIG.confettiBurst === false || reduceMotion()) { cv.remove(); return; }
+
+    const ctx = cv.getContext('2d');
+    let W = 0, H = 0, dpr = 1;
+
+    function size() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      /* clientWidth, not innerWidth: innerWidth includes the scrollbar and a
+         fixed canvas that wide can widen the page */
+      W = document.documentElement.clientWidth; H = window.innerHeight;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      cv.style.width = W + 'px'; cv.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    size();
+
+    const R = (a, b) => a + Math.random() * (b - a);
+    const pieces = [];
+
+    /* two poppers at the bottom corners, fired inward and up */
+    function cannon(originX, originY, aimDeg, n) {
+      for (let i = 0; i < n; i++) {
+        const ang = (aimDeg + R(-16, 16)) * Math.PI / 180;
+        const speed = R(880, 1500);
+        const kind = Math.random();
+        pieces.push({
+          x: originX, y: originY,
+          vx: Math.cos(ang) * speed,
+          vy: Math.sin(ang) * speed,
+          w: R(7, 13), h: R(10, 18),
+          rot: R(0, Math.PI * 2), vrot: R(-9, 9),
+          spin: R(4, 11), phase: R(0, Math.PI * 2), sway: R(14, 34),
+          colour: PALETTE[i % PALETTE.length],
+          shape: kind < 0.68 ? 'rect' : (kind < 0.86 ? 'circle' : 'ribbon'),
+          delay: R(0, 0.12)
+        });
+      }
+    }
+    /* and a light shower from above, slightly later */
+    function shower(n) {
+      for (let i = 0; i < n; i++) {
+        pieces.push({
+          x: R(0, W), y: R(-140, -20),
+          vx: R(-40, 40), vy: R(90, 220),
+          w: R(6, 12), h: R(9, 16),
+          rot: R(0, Math.PI * 2), vrot: R(-6, 6),
+          spin: R(3, 9), phase: R(0, Math.PI * 2), sway: R(16, 40),
+          colour: PALETTE[i % PALETTE.length],
+          shape: Math.random() < 0.7 ? 'rect' : 'circle',
+          delay: R(0.25, 1.5)
+        });
+      }
+    }
+
+    cannon(W * 0.06, H * 1.02, -68, 70);
+    cannon(W * 0.94, H * 1.02, -112, 70);
+    shower(46);
+
+    const GRAV = 1500, DRAG = 0.55, LIFE = 5.2;
+    let t0 = 0, last = 0, raf = 0;
+
+    function frame() {
+      /* drive off the wall clock rather than the rAF timestamp: the two can
+         drift apart, and if they do the loop never reaches its cutoff */
+      const now = Date.now();
+      if (!t0) { t0 = now; last = now; }
+      let dt = (now - last) / 1000;
+      last = now;
+      if (dt > 0.05) dt = 0.05;          /* a backgrounded tab must not teleport them */
+      const elapsed = (now - t0) / 1000;
+
+      ctx.clearRect(0, 0, W, H);
+      let alive = 0;
+
+      for (let i = 0; i < pieces.length; i++) {
+        const p = pieces[i];
+        if (elapsed < p.delay) { alive++; continue; }
+
+        p.vy += GRAV * dt;
+        p.vx -= p.vx * DRAG * dt;
+        p.vy -= p.vy * DRAG * 0.35 * dt;
+        p.x += (p.vx + Math.sin(p.phase + elapsed * 2.4) * p.sway) * dt;
+        p.y += p.vy * dt;
+        p.rot += p.vrot * dt;
+        p.phase += p.spin * dt;
+
+        if (p.y - 40 > H) continue;       /* gone for good */
+        alive++;
+
+        const fade = elapsed > LIFE - 1.1 ? Math.max(0, (LIFE - elapsed) / 1.1) : 1;
+        ctx.save();
+        ctx.globalAlpha = fade;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        /* squashing on one axis reads as paper flipping edge-on */
+        ctx.scale(Math.cos(p.phase) * 0.85 + 0.15, 1);
+        ctx.fillStyle = p.colour;
+        if (p.shape === 'circle') {
+          ctx.beginPath(); ctx.arc(0, 0, p.w * 0.5, 0, Math.PI * 2); ctx.fill();
+        } else if (p.shape === 'ribbon') {
+          ctx.strokeStyle = p.colour; ctx.lineWidth = 3; ctx.lineCap = 'round';
+          ctx.beginPath(); ctx.moveTo(-p.w, 0);
+          ctx.quadraticCurveTo(0, -p.h * 0.8, p.w, 0); ctx.stroke();
+        } else {
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        }
+        ctx.restore();
+      }
+
+      if (alive && elapsed < LIFE) { raf = requestAnimationFrame(frame); }
+      else { stop(); }
+    }
+
+    let stopped = false;
+    function stop() {
+      if (stopped) return;
+      stopped = true;
+      if (raf) cancelAnimationFrame(raf), raf = 0;
+      ctx.clearRect(0, 0, W, H);
+      if (cv.parentNode) cv.remove();
+      document.documentElement.dataset.burst = 'done';
+      window.removeEventListener('resize', size);
+    }
+
+    window.addEventListener('resize', size);
+    raf = requestAnimationFrame(frame);
+    /* belt and braces: if rAF is throttled or the tab is backgrounded, the
+       loop may never reach its own cutoff, so guarantee the cleanup */
+    setTimeout(stop, (LIFE + 1.5) * 1000);
+  })();
+
+  /* ======================================================================
+     COPY
+     ====================================================================== */
+  const setText = (id, v) => { const n = $(id); if (n) n.textContent = v; };
+  document.title = 'Happy Birthday, ' + CONFIG.herName;
+  setText('heroName', CONFIG.herName);
+  setText('heroAgeOutline', CONFIG.hero.age);
+  setText('heroAgeFill', CONFIG.hero.age);
+  setText('heroLine', CONFIG.hero.line);
+  setText('puzzleHeading', CONFIG.puzzle.heading);
+  setText('puzzleLede', CONFIG.puzzle.lede);
+  setText('puzzleHelp', CONFIG.puzzle.help);
+  setText('wishText', CONFIG.cake.wish);
+  setText('blowBtn', CONFIG.cake.blowBtn);
+  setText('micBtn', CONFIG.cake.micBtn);
+  setText('yearsHeading', CONFIG.years.heading);
+  setText('yearsLede', CONFIG.years.lede);
+  setText('notesHeading', CONFIG.notes.heading);
+  setText('notesLede', CONFIG.notes.lede);
+  setText('shelfHeading', CONFIG.shelf.heading);
+  setText('shelfLede', CONFIG.shelf.lede);
+  setText('shelfHint', CONFIG.shelf.hint);
+  setText('rhythmHeading', CONFIG.rhythm.heading);
+  setText('rhythmLede', CONFIG.rhythm.lede);
+  setText('skyHeading', CONFIG.sky.heading);
+  setText('skyLede', CONFIG.sky.lede);
+  setText('skyCaption', CONFIG.sky.caption);
+  setText('letterHeading', CONFIG.letter.heading);
+  setText('letterLede', CONFIG.letter.lede);
+  setText('envHint', CONFIG.letter.hint);
+  setText('envSeal', CONFIG.letter.seal);
+
+  const bands = PALETTE.map((c, i, a) => {
+    const f = (i/a.length*100).toFixed(3), t = ((i+1)/a.length*100).toFixed(3);
+    return c + ' ' + f + '% ' + t + '%';
+  }).join(', ');
+  $('heroAgeFill').style.backgroundImage = 'linear-gradient(96deg, ' + bands + ')';
+  $('heroRibbonPath').setAttribute('stroke', PALETTE[0]);
+  $('envelope').style.setProperty('--fc', PALETTE[0]);
+  $('envelope').style.setProperty('--sc', PALETTE[5]);
+
+  if (reduceMotion()) document.documentElement.dataset.intro = 'done';
+  else requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.documentElement.dataset.intro = 'run';
+  }));
+
+  /* ======================================================================
+     JIGSAW GEOMETRY
+     Every SLOT keeps its shape; swapping moves the picture, not the shape,
+     so the nine pieces always interlock cleanly, solved or not.
+     ====================================================================== */
+  const OVH = 0.27, BOX = 1 + 2 * OVH;
+  function edgeSegs(s) {
+    if (!s) return [['L', [1, 0]]];
+    return [
+      ['L', [0.38, 0]],
+      ['C', [0.38, 0.05*s, 0.34, 0.07*s, 0.34, 0.11*s]],
+      ['C', [0.28, 0.20*s, 0.34, 0.27*s, 0.50, 0.27*s]],
+      ['C', [0.66, 0.27*s, 0.72, 0.20*s, 0.66, 0.11*s]],
+      ['C', [0.66, 0.07*s, 0.62, 0.05*s, 0.62, 0]],
+      ['L', [1, 0]]
+    ];
+  }
+  const V = [[1,-1],[-1,1],[1,1]], H = [[1,-1,1],[-1,1,-1]];
+  function piecePoints(r, c) {
+    const sides = [
+      { A:[0,0], D:[1,0],  N:[0,-1], s: r===0 ? 0 : -H[r-1][c] },
+      { A:[1,0], D:[0,1],  N:[1,0],  s: c===2 ? 0 :  V[r][c]    },
+      { A:[1,1], D:[-1,0], N:[0,1],  s: r===2 ? 0 :  H[r][c]    },
+      { A:[0,1], D:[0,-1], N:[-1,0], s: c===0 ? 0 : -V[r][c-1]  }
+    ];
+    const out = [['M', [0, 0]]];
+    sides.forEach((sd) => edgeSegs(sd.s).forEach(([cmd, nums]) => {
+      const pts = [];
+      for (let i = 0; i < nums.length; i += 2)
+        pts.push(sd.A[0] + sd.D[0]*nums[i] + sd.N[0]*nums[i+1],
+                 sd.A[1] + sd.D[1]*nums[i] + sd.N[1]*nums[i+1]);
+      out.push([cmd, pts]);
+    }));
+    out.push(['Z', []]);
+    return out;
+  }
+  const fmt = (segs, map) => segs.map(([cmd, nums]) => {
+    if (cmd === 'Z') return 'Z';
+    const s = [];
+    for (let i = 0; i < nums.length; i += 2) {
+      const [x, y] = map(nums[i], nums[i+1]);
+      s.push(x.toFixed(4) + ',' + y.toFixed(4));
+    }
+    return cmd + s.join(' ');
+  }).join(' ');
+
+  const seamPaths = [];
+  const defs = el('defs', {});
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) {
+    const pts = piecePoints(r, c);
+    const cp = el('clipPath', { id: 'jig-' + r + c, clipPathUnits: 'objectBoundingBox' });
+    cp.appendChild(el('path', { d: fmt(pts, (x,y) => [(x+OVH)/BOX, (y+OVH)/BOX]) }));
+    defs.appendChild(cp);
+    seamPaths.push(fmt(pts, (x,y) => [x+c, y+r]));
+  }
+  $('clipDefs').appendChild(defs);
+
+  /* ======================================================================
+     PUZZLE
+     ====================================================================== */
+  const grid = $('puzzleGrid'), peekLayer = $('peekLayer'),
+        peekBtn = $('peekBtn'), statusEl = $('puzzleStatus'), N = 9;
+  grid.style.aspectRatio = CONFIG.photoFrame || '1 / 1';
+  let order = [], selected = null, solved = false, photoOK = true, img = { w:0, h:0 };
+
+  const probe = new Image();
+  probe.onload = () => { img = { w: probe.naturalWidth, h: probe.naturalHeight }; layout(); };
+  probe.onerror = () => {
+    photoOK = false; grid.classList.add('no-photo');
+    const w = $('photoWarn'); w.hidden = false;
+    w.innerHTML = 'No photo found at <strong>' + CONFIG.photo + '</strong>. Drop a photo named ' +
+      '<strong>photo.jpg</strong> next to this file and refresh — the puzzle works either way.';
+  };
+  probe.src = CONFIG.photo;
+
+  /* A tab hangs OVH of a cell outside its own cell and still needs picture in
+     it, so the photo must cover the 3x3 block PLUS that margin. */
+  function cover() {
+    const gw = grid.clientWidth, gh = grid.clientHeight;
+    if (!gw || !gh || !img.w) return null;
+    const f = (CONFIG.photoFocus || '50% 50%').split(/\s+/);
+    const fx = (parseFloat(f[0]) || 50)/100, fy = (parseFloat(f[1]) || 50)/100;
+    const Sx = gw/3, Sy = gh/3;
+    const needW = gw + 2*OVH*Sx, needH = gh + 2*OVH*Sy;
+    const scale = Math.max(needW/img.w, needH/img.h);
+    const dw = img.w*scale, dh = img.h*scale;
+    return { gw, gh, dw, dh, Sx, Sy,
+             blockX: (dw-needW)*fx + OVH*Sx, blockY: (dh-needH)*fy + OVH*Sy };
+  }
+  function paint(pos) {
+    const btn = grid.children[pos], piece = order[pos];
+    const pc = piece % 3, pr = Math.floor(piece / 3);
+    const art = btn.querySelector('.piece-art'), cv = cover();
+    if (photoOK && cv) {
+      art.style.backgroundImage = 'url("' + CONFIG.photo + '")';
+      art.style.backgroundSize = cv.dw + 'px ' + cv.dh + 'px';
+      art.style.backgroundPosition =
+        (OVH*cv.Sx - (cv.blockX + pc*cv.Sx)) + 'px ' + (OVH*cv.Sy - (cv.blockY + pr*cv.Sy)) + 'px';
+    }
+    btn.querySelector('.num').textContent = piece + 1;
+    btn.setAttribute('aria-label', 'Piece ' + (piece+1) + ' of 9, currently in position ' +
+      (pos+1) + (piece === pos ? ' — correct' : ''));
+  }
+  function layout() {
+    const gw = grid.clientWidth, gh = grid.clientHeight;
+    if (!gw) return;
+    grid.style.setProperty('--ovh', (OVH*gw/3) + 'px');
+    for (let i = 0; i < N; i++) {
+      const b = grid.children[i];
+      b.style.marginTop = b.style.marginBottom = (-OVH*gh/3) + 'px';
+      b.style.marginLeft = b.style.marginRight = (-OVH*gw/3) + 'px';
+      paint(i);
+    }
+    const cv = cover();
+    if (photoOK && cv) {
+      peekLayer.style.backgroundImage = 'url("' + CONFIG.photo + '")';
+      peekLayer.style.backgroundSize = cv.dw + 'px ' + cv.dh + 'px';
+      peekLayer.style.backgroundPosition = (-cv.blockX) + 'px ' + (-cv.blockY) + 'px';
+    }
+  }
+  function build() {
+    for (let pos = 0; pos < N; pos++) {
+      const r = Math.floor(pos/3), c = pos % 3;
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'piece';
+      btn.setAttribute('aria-pressed', 'false');
+      btn.style.setProperty('--clip', 'url(#jig-' + r + c + ')');
+      const art = document.createElement('span'); art.className = 'piece-art';
+      const num = document.createElement('span'); num.className = 'num';
+      num.setAttribute('aria-hidden', 'true');
+      btn.append(art, num);
+      btn.addEventListener('click', () => onPiece(pos));
+      grid.appendChild(btn);
+    }
+    const seams = el('svg', { id:'seams', viewBox:'0 0 3 3', preserveAspectRatio:'none' });
+    seams.setAttribute('aria-hidden', 'true');
+    seamPaths.forEach(d => seams.appendChild(el('path', { d })));
+    grid.appendChild(seams);
+  }
+  const isSolved = () => order.every((p, i) => p === i);
+  function shuffle() {
+    order = Array.from({ length: N }, (_, i) => i);
+    do { for (let i = N-1; i > 0; i--) {
+      const j = Math.floor(Math.random()*(i+1));
+      [order[i], order[j]] = [order[j], order[i]];
+    } } while (isSolved());
+  }
+  const say = (m) => { statusEl.textContent = m; };
+  function onPiece(pos) {
+    if (solved) return;
+    if (selected === null) {
+      selected = pos; grid.children[pos].setAttribute('aria-pressed', 'true');
+      say('Piece ' + (order[pos]+1) + ' selected. Choose another to swap.'); return;
+    }
+    if (selected === pos) {
+      grid.children[pos].setAttribute('aria-pressed', 'false');
+      selected = null; say('Selection cleared.'); return;
+    }
+    const a = selected, b = pos;
+    grid.children[a].setAttribute('aria-pressed', 'false');
+    selected = null;
+    [order[a], order[b]] = [order[b], order[a]];
+    paint(a); paint(b);
+    if (isSolved()) onSolve();
+    else say('Swapped. ' + order.reduce((n,p,i)=>n+(p===i?1:0),0) + ' of 9 pieces in place.');
+  }
+  function onSolve() {
+    solved = true; grid.classList.add('solved');
+    grid.querySelectorAll('.piece').forEach((p, i) => {
+      /* aria-disabled, not disabled: a disabled button drops keyboard focus
+         on the spot, stranding anyone who solved this from the keyboard */
+      p.setAttribute('aria-disabled', 'true');
+      p.setAttribute('aria-pressed', 'false');
+      p.setAttribute('aria-label', 'Piece ' + (i+1) + ' of 9, in place');
+    });
+    peekBtn.hidden = true;
+    say(CONFIG.puzzle.solved);
+    revealCake(); playHappyBirthday();
+  }
+  let peekTimer = null;
+  peekBtn.addEventListener('click', () => {
+    if (peekTimer || solved) return;
+    if (!photoOK) { say('There is no photo to peek at yet.'); return; }
+    peekBtn.disabled = true; $('peekBtnLabel').textContent = 'Look quickly…';
+    peekLayer.classList.add('on');
+    peekTimer = setTimeout(() => {
+      peekLayer.classList.remove('on'); peekBtn.disabled = false;
+      $('peekBtnLabel').textContent = 'Peek at the photo'; peekTimer = null;
+    }, 1500);
+  });
+  build(); shuffle(); layout();
+  say('Nine pieces, shuffled. Tap two to swap them.');
+  let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layout, 120); });
+
+  /* ======================================================================
+     CAKE
+     ====================================================================== */
+  const CANDLES = 21;
+  function buildCake() {
+    const box = $('cake');
+    const svg = el('svg', { viewBox: '0 116 400 232', role: 'img' });
+    svg.setAttribute('aria-label', 'A birthday cake with twenty-one candles');
+    const d2 = el('defs', {});
+    const grad = el('linearGradient', { id:'icing', x1:'0', y1:'0', x2:'1', y2:'0' });
+    PALETTE.forEach((c, i, a) => {
+      grad.appendChild(el('stop', { offset:(i/a.length*100)+'%', 'stop-color':c }));
+      grad.appendChild(el('stop', { offset:((i+1)/a.length*100)+'%', 'stop-color':c }));
+    });
+    const glow = el('radialGradient', { id:'glow' });
+    glow.appendChild(el('stop', { offset:'0%', 'stop-color':'#F0B860', 'stop-opacity':'.55' }));
+    glow.appendChild(el('stop', { offset:'100%', 'stop-color':'#F0B860', 'stop-opacity':'0' }));
+    d2.append(grad, glow); svg.appendChild(d2);
+    svg.appendChild(el('ellipse', { class:'cake-glow', cx:200, cy:160, rx:198, ry:118, fill:'url(#glow)' }));
+
+    const RIM = 200, RX = 140, RY = 20;
+    const rimDip = (x) => { const u = (x-200)/RX; return RY*Math.sqrt(Math.max(0, 1-u*u)); };
+    svg.appendChild(el('ellipse', { cx:200, cy:326, rx:168, ry:14, fill:'var(--paper-2)', class:'ink' }));
+    svg.appendChild(el('path', { class:'ink', fill:'var(--paper-2)',
+      d:'M60,'+RIM+' L60,306 A140,18 0 0 0 340,306 L340,'+RIM+' Z' }));
+    svg.appendChild(el('path', { class:'body-line', d:'M60,252 A140,18 0 0 0 340,252' }));
+    svg.appendChild(el('path', { class:'body-line', d:'M60,282 A140,18 0 0 0 340,282' }));
+
+    /* Each drip is measured DOWN FROM THE RIM at that x — otherwise the icing
+       band pinches to nothing at the sides and reads as loose blobs. */
+    const depth = [30,48,26,54,32,50,28,46,30];
+    const n = depth.length, xR = 340, xL = 60, span = (xR-xL)/n;
+    let drips = '';
+    for (let i = 0; i < n; i++) {
+      const xs = xR - i*span, xe = xR - (i+1)*span, xm = (xs+xe)/2;
+      drips += ' Q' + xm.toFixed(1) + ',' + (RIM+rimDip(xm)+depth[i]).toFixed(1) +
+               ' ' + xe.toFixed(1) + ',' + (RIM+rimDip(xe)+14).toFixed(1);
+    }
+    svg.appendChild(el('path', { class:'ink', fill:'url(#icing)',
+      d:'M60,'+(RIM+14)+' Q200,'+(RIM+RY*1.3+14)+' 340,'+(RIM+14)+drips+' Z' }));
+    svg.appendChild(el('ellipse', { cx:200, cy:RIM, rx:RX, ry:RY, fill:'url(#icing)', class:'ink' }));
+
+    /* 21 candles: 11 at the back, 10 at the front. The front row is wider and
+       taller than the back row, so the two read as depth, not a fence. */
+    const rows = [
+      { n:11, y:188, x0:96, x1:304, k:0.82 },
+      { n:10, y:212, x0:80, x1:320, k:1.0  }
+    ];
+    let idx = 0;
+    rows.forEach((row) => {
+      for (let i = 0; i < row.n; i++) {
+        const x = row.x0 + i*(row.x1-row.x0)/(row.n-1);
+        const g = el('g', { class:'candle-g' });
+        g.style.setProperty('--i', String(idx));
+        const hgt = 46*row.k, w = 7.5*row.k, top = row.y - hgt;
+        g.appendChild(el('rect', { x:x-w/2, y:top, width:w, height:hgt,
+          fill:'var(--paper-2)', class:'ink', 'stroke-width':2, rx:2 }));
+        g.appendChild(el('path', { class:'ink', 'stroke-width':1.4, d:'M'+(x-w/2)+','+(row.y-hgt*0.62)+' H'+(x+w/2) }));
+        g.appendChild(el('path', { class:'ink', 'stroke-width':1.4, d:'M'+(x-w/2)+','+(row.y-hgt*0.32)+' H'+(x+w/2) }));
+        g.appendChild(el('path', { class:'ink', 'stroke-width':1.6, d:'M'+x+','+top+' V'+(top-6) }));
+        const f = el('g', { class:'flame' });
+        f.style.setProperty('--i', String(idx));
+        f.appendChild(el('path', { class:'ink', 'stroke-width':1.6, fill:'var(--lit)',
+          d:'M'+x+','+(top-24)+' C'+(x+7)+','+(top-16)+' '+(x+6)+','+(top-6)+' '+x+','+(top-6)+
+            ' C'+(x-6)+','+(top-6)+' '+(x-7)+','+(top-16)+' '+x+','+(top-24)+' Z' }));
+        f.appendChild(el('ellipse', { cx:x, cy:top-11, rx:2, ry:3.4, fill:'var(--lit-core)', stroke:'none' }));
+        g.appendChild(f);
+        const sm = el('path', { class:'smoke', d:'M'+x+','+(top-8)+' q5,-9 0,-18 q-5,-9 0,-16',
+          fill:'none', stroke:'#9B8A93', 'stroke-width':2, 'stroke-linecap':'round' });
+        sm.style.setProperty('--i', String(idx));
+        g.appendChild(sm);
+        svg.appendChild(g);
+        idx++;
+      }
+    });
+    box.appendChild(svg);
+  }
+
+  function revealCake() {
+    const box = $('cake');
+    box.classList.add('show');
+    setTimeout(() => {
+      box.classList.add('lit');
+      box.querySelector('svg').setAttribute('aria-label', 'A birthday cake with twenty-one lit candles');
+      $('wish').hidden = false;
+      if (window.isSecureContext && navigator.mediaDevices &&
+          navigator.mediaDevices.getUserMedia) $('micBtn').hidden = false;
+    }, reduceMotion() ? 0 : 420);
+  }
+  buildCake();
+
+  /* --- blowing them out ------------------------------------------------- */
+  let blownOut = false, micStream = null, micRaf = 0;
+  function blowOut(how) {
+    if (blownOut) return;
+    blownOut = true;
+    stopMic();
+    const box = $('cake');
+    box.classList.add('out');
+    box.querySelector('svg').setAttribute('aria-label', 'A birthday cake, candles blown out');
+    $('blowBtn').disabled = true; $('micBtn').hidden = true; $('micMeter').hidden = true;
+    $('wishText').textContent = CONFIG.cake.done;
+    $('blowStatus').textContent = CONFIG.cake.done + (how === 'mic' ? '' : '');
+  }
+  $('blowBtn').addEventListener('click', () => blowOut('tap'));
+
+  function stopMic() {
+    if (micRaf) cancelAnimationFrame(micRaf), micRaf = 0;
+    if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  }
+  $('micBtn').addEventListener('click', async () => {
+    const btn = $('micBtn');
+    btn.disabled = true;
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (e) {
+      btn.hidden = true;
+      $('blowStatus').textContent = 'No microphone — use the button instead.';
+      return;
+    }
+    btn.hidden = true;
+    $('micMeter').hidden = false;
+    $('wishText').textContent = CONFIG.cake.micHint;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AC();
+    const src = ctx.createMediaStreamSource(micStream);
+    const an = ctx.createAnalyser();
+    an.fftSize = 1024;
+    src.connect(an);
+    const buf = new Uint8Array(an.fftSize);
+    let loud = 0;
+    const tick = () => {
+      an.getByteTimeDomainData(buf);
+      let sum = 0;
+      for (let i = 0; i < buf.length; i++) { const v = (buf[i]-128)/128; sum += v*v; }
+      const rms = Math.sqrt(sum / buf.length);
+      $('micLevel').style.width = Math.min(100, rms * 420).toFixed(0) + '%';
+      loud = rms > 0.13 ? loud + 1 : 0;   /* ~8 frames of sustained noise */
+      if (loud > 8) { blowOut('mic'); try { ctx.close(); } catch (e) {} return; }
+      micRaf = requestAnimationFrame(tick);
+    };
+    micRaf = requestAnimationFrame(tick);
+  });
+  window.addEventListener('pagehide', stopMic);
+
+  /* ======================================================================
+     HAPPY BIRTHDAY — synthesised, so it works with no network
+     ====================================================================== */
+  const PITCH = { C2:65.41, F2:87.31, G2:98.00,
+                  G3:196.00, A3:220.00, B3:246.94, C4:261.63, D4:293.66,
+                  E4:329.63, F4:349.23, G4:392.00, C5:523.25 };
+  const MELODY = [
+    ['G3',.75],['G3',.25],['A3',1],['G3',1],['C4',1],['B3',2],
+    ['G3',.75],['G3',.25],['A3',1],['G3',1],['D4',1],['C4',2],
+    ['G3',.75],['G3',.25],['G4',1],['E4',1],['C4',1],['B3',1],['A3',2],
+    ['F4',.75],['F4',.25],['E4',1],['C4',1],['D4',1],['C4',3]
+  ];
+  /* one root per phrase: [start beat, length in beats, note] */
+  const PHRASES = [[0,6,'C2'],[6,6,'G2'],[12,7,'C2'],[19,7,'F2']];
+  const BARS = 26;                       /* beats in one time through */
+
+  let played = false;
+  function playHappyBirthday() {
+    if (played) return; played = true;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    let ctx; try { ctx = new AC(); } catch (e) { return; }
+    if (ctx.state === 'suspended' && ctx.resume) ctx.resume();
+
+    const master = ctx.createGain(); master.gain.value = 0.0001;
+    const warm = ctx.createBiquadFilter(); warm.type = 'lowpass'; warm.frequency.value = 2600;
+    master.connect(warm).connect(ctx.destination);
+
+    const BEAT = 0.42, t0 = ctx.currentTime + 0.5;
+    master.gain.setValueAtTime(0.0001, t0);
+    master.gain.exponentialRampToValueAtTime(0.22, t0 + 0.08);
+
+    function voice(freq, start, len, peak, type, shimmer) {
+      const v = ctx.createGain();
+      v.gain.setValueAtTime(0.0001, start);
+      v.gain.exponentialRampToValueAtTime(peak, start + 0.012);
+      v.gain.exponentialRampToValueAtTime(0.0001, start + len);
+      v.connect(master);
+      const o = ctx.createOscillator();
+      o.type = type; o.frequency.setValueAtTime(freq, start);
+      o.connect(v); o.start(start); o.stop(start + len + 0.02);
+      if (shimmer) {                     /* an octave up, quietly, for sparkle */
+        const sh = ctx.createOscillator();
+        sh.type = 'sine'; sh.frequency.setValueAtTime(freq * 2, start);
+        const sg = ctx.createGain(); sg.gain.value = 0.18;
+        sh.connect(sg).connect(v); sh.start(start); sh.stop(start + len + 0.02);
+      }
+    }
+
+    /* twice through: the first time plain, the second with a bass under it */
+    for (let pass = 0; pass < 2; pass++) {
+      let beat = 0;
+      MELODY.forEach(function (n) {
+        const dur = n[1] * BEAT, len = Math.max(0.12, dur * 0.92);
+        voice(PITCH[n[0]], t0 + (pass * BARS + beat) * BEAT, len, 0.9, 'triangle', true);
+        beat += n[1];
+      });
+      if (pass === 1) {
+        PHRASES.forEach(function (ph) {
+          voice(PITCH[ph[2]], t0 + (BARS + ph[0]) * BEAT, ph[1] * BEAT * 0.9, 0.34, 'sine', false);
+        });
+      }
+    }
+
+    /* and a held chord to land on */
+    const fin = t0 + 2 * BARS * BEAT;
+    [PITCH.C4, PITCH.E4, PITCH.G4, PITCH.C5].forEach(function (f, i) {
+      voice(f, fin + i * 0.05, 2.6, 0.5, 'triangle', false);
+    });
+    voice(PITCH.C2, fin, 2.8, 0.3, 'sine', false);
+
+    const end = fin + 3.0;
+    master.gain.setValueAtTime(0.22, fin + 2.2);
+    master.gain.exponentialRampToValueAtTime(0.0001, end);
+    setTimeout(function () { if (ctx.close) ctx.close(); }, (end - ctx.currentTime + 0.6) * 1000);
+  }
+
+  /* ======================================================================
+     FIVE YEARS
+     ====================================================================== */
+  CONFIG.years.stops.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'year';
+    row.style.setProperty('--yc', PALETTE[i % PALETTE.length]);
+    const n = document.createElement('div'); n.className = 'year-n'; n.textContent = s.age;
+    const t = document.createElement('p'); t.className = 'year-t'; t.innerHTML = s.text;
+    row.append(n, t);
+    $('yearsList').appendChild(row);
+  });
+
+  /* ======================================================================
+     TWENTY-ONE NOTES
+     ====================================================================== */
+  (function notes() {
+    const gridEl = $('notesGrid'), items = CONFIG.notes.items || [];
+    let opened = 0;
+    const count = () => {
+      $('notesCount').textContent = opened + ' of ' + items.length + ' ' + CONFIG.notes.counter;
+    };
+    items.forEach((txt, i) => {
+      const c = PALETTE[i % PALETTE.length];
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'note';
+      b.setAttribute('aria-expanded', 'false');
+      b.style.setProperty('--nc', c);
+      b.style.setProperty('--nt', readableOn(c));
+      b.setAttribute('aria-label', 'Note ' + (i+1) + ' of ' + items.length + '. Open to read it.');
+      const inner = document.createElement('span'); inner.className = 'note-inner';
+      const front = document.createElement('span'); front.className = 'note-face note-front';
+      front.textContent = String(i+1);
+      const back = document.createElement('span'); back.className = 'note-face note-back';
+      back.textContent = txt;
+      inner.append(front, back); b.appendChild(inner);
+      b.addEventListener('click', () => {
+        const open = b.getAttribute('aria-expanded') === 'true';
+        b.setAttribute('aria-expanded', String(!open));
+        b.setAttribute('aria-label', !open
+          ? 'Note ' + (i+1) + ': ' + txt
+          : 'Note ' + (i+1) + ' of ' + items.length + '. Open to read it.');
+        if (!open) { opened++; count(); }
+        else { opened--; count(); }
+      });
+      gridEl.appendChild(b);
+    });
+    count();
+  })();
+
+  /* ======================================================================
+     THE PILE — photos stacked like prints; the top one deals to the back.
+     Only the top few are ever in the DOM as visible cards, and images load
+     in a window around the current one, so 40 photos cost the same as 4.
+     ====================================================================== */
+  (function pile() {
+    const G = CONFIG.gallery, shots = (G && G.photos) || [];
+    setText('pileHeading', G.heading);
+    setText('pileLede', G.lede);
+    setText('pileHint', G.hint);
+    if (!shots.length) { $('pile').hidden = true; return; }
+
+    const stage = $('pileStage'), N = shots.length;
+    const DEPTH = Math.min(4, N);     /* cards visible in the stack */
+    const WINDOW = DEPTH + 2;         /* images kept loaded around the top */
+    let idx = 0, busy = false, missing = 0;
+
+    const cards = shots.map(function (shot, i) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pile-card';
+      /* a fixed, deterministic tilt per card so the pile looks dealt by hand
+         and does not reshuffle every time it is laid out */
+      b.style.setProperty('--rot', (((i * 37) % 9) - 4) * 0.9 + 'deg');
+      /* alternate which side each card peeks out of, so the stack looks
+         dealt by hand rather than squared up */
+      b.style.setProperty('--dx', (i % 2 ? 11 : -11) + 'px');
+
+      const win = document.createElement('span');
+      win.className = 'pile-photo';
+      const im = document.createElement('img');
+      im.alt = '';
+      im.decoding = 'async';
+      im.loading = 'lazy';
+      im.addEventListener('error', function () {
+        win.classList.add('lost');
+        missing++;
+        const note = $('pileNote');
+        if (note.hidden) {
+          note.hidden = false;
+          note.textContent = G.missingNote;
+        }
+      });
+      win.appendChild(im);
+
+      const cap = document.createElement('span');
+      cap.className = 'pile-cap';
+      cap.textContent = shot.caption || '';
+
+      b.append(win, cap);
+      b.addEventListener('click', function () { deal(1); });
+      stage.appendChild(b);
+      return b;
+    });
+
+    function loadWindow() {
+      for (let k = 0; k < WINDOW; k++) {
+        const i = (idx + k) % N;
+        const im = cards[i].querySelector('img');
+        if (!im.getAttribute('src'))
+          /* raw spaces are not valid in a URL; the WhatsApp exports have them */
+          im.setAttribute('src', String(shots[i].src).replace(/ /g, '%20'));
+      }
+    }
+
+    function relayout() {
+      cards.forEach(function (c, i) {
+        const rel = (i - idx + N) % N;
+        if (rel < DEPTH) {
+          c.hidden = false;
+          c.style.setProperty('--k', String(rel));
+          c.style.zIndex = String(DEPTH - rel);
+          c.disabled = rel !== 0;
+          c.setAttribute('aria-hidden', rel === 0 ? 'false' : 'true');
+          c.setAttribute('aria-label', rel === 0
+            ? 'Photo ' + (i + 1) + ' of ' + N +
+              (shots[i].caption ? '. ' + String(shots[i].caption).replace(/[.\s]+$/, '') : '') +
+              '. Activate for the next one.'
+            : '');
+        } else {
+          c.hidden = true;
+        }
+      });
+      $('pileCount').textContent = (idx + 1) + ' ' + (G.counter || 'of') + ' ' + N;
+      loadWindow();
+    }
+
+    function deal(dir) {
+      if (busy || N < 2) return;
+      const top = cards[idx];
+      const finish = function () {
+        busy = false;
+        top.classList.remove('dealing', 'dealing-back');
+        idx = (idx + dir + N) % N;
+        relayout();
+        /* keep focus on the pile, not lost to the body */
+        if (document.activeElement === top || top.contains(document.activeElement)) {
+          cards[idx].focus();
+        }
+      };
+      if (reduceMotion()) { finish(); return; }
+      busy = true;
+      top.classList.add(dir > 0 ? 'dealing' : 'dealing-back');
+      /* explicit final state on a timer — never wait on animationend */
+      setTimeout(finish, 360);
+    }
+
+    $('pilePrev').addEventListener('click', function () { deal(-1); });
+    $('pileNext').addEventListener('click', function () { deal(1); });
+    stage.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); deal(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); deal(-1); }
+    });
+
+    relayout();
+  })();
+
+  /* ======================================================================
+     BOOKSHELF
+     ====================================================================== */
+  CONFIG.books.forEach((book, i) => {
+    const li = document.createElement('li');
+    li.style.setProperty('--wf', String(book.width || 1));
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'book';
+    btn.style.setProperty('--spine', book.color);
+    btn.style.setProperty('--foil', book.foil || foilFor(book.color));
+    btn.style.setProperty('--h', String(book.height || 0.9));
+    btn.setAttribute('aria-haspopup', 'dialog');
+    btn.setAttribute('aria-label', 'Open the book “' + book.title + '”' +
+      (book.author ? ' by ' + book.author : '') + ', ' + book.pages.length + ' pages');
+
+    const ruleTop = document.createElement('span'); ruleTop.className = 'spine-rule';
+    const block = document.createElement('span'); block.className = 'spine-block';
+    const t = document.createElement('span'); t.className = 'spine-title'; t.textContent = book.title;
+    block.appendChild(t);
+    btn.append(ruleTop, block);
+    if (book.author) {
+      const a = document.createElement('span'); a.className = 'spine-author';
+      a.textContent = book.author; btn.appendChild(a);
+    }
+    if (book.publisher) {
+      const pb = document.createElement('span'); pb.className = 'spine-pub';
+      pb.textContent = book.publisher; btn.appendChild(pb);
+    }
+    const ruleBot = document.createElement('span'); ruleBot.className = 'spine-rule';
+    btn.appendChild(ruleBot);
+
+    btn.addEventListener('click', () => openBook(i, btn));
+    li.appendChild(btn);
+    $('booksList').appendChild(li);
+  });
+
+  /* ======================================================================
+     RHYTHM — an ECG strip, warmed up
+     ====================================================================== */
+  (function ecg() {
+    const beats = Math.max(1, CONFIG.rhythm.beats || 21);
+    const bw = 46, H0 = 160, base = 100, amp = 62, w = beats*bw + 40;
+    const svg = el('svg', { viewBox:'0 0 '+w+' '+H0, preserveAspectRatio:'none', role:'img' });
+    svg.setAttribute('aria-label', beats + ' regular heartbeats, drawn as an electrocardiogram trace');
+    const SHAPE = [[0,0],[.10,0],[.14,.16],[.18,.22],[.22,.16],[.26,0],[.34,0],
+                   [.37,-.10],[.41,1],[.45,-.28],[.49,0],[.60,0],
+                   [.66,.26],[.72,.30],[.78,.20],[.84,0],[1,0]];
+    let d = 'M0,'+base+' L20,'+base;
+    for (let b = 0; b < beats; b++) {
+      const x0 = 20 + b*bw;
+      SHAPE.forEach(([fx, fy], i) => {
+        if (b > 0 && i === 0) return;
+        d += ' L' + (x0+fx*bw).toFixed(2) + ',' + (base-fy*amp).toFixed(2);
+      });
+    }
+    d += ' L'+w+','+base;
+    svg.appendChild(el('path', { class:'ecg-trace', d,
+      stroke: PALETTE[CONFIG.rhythm.colorIndex] || PALETTE[0] }));
+    $('ecgPaper').appendChild(svg);
+    $('ecgCaption').innerHTML = '<span>'+CONFIG.rhythm.left+'</span><span>'+CONFIG.rhythm.right+'</span>';
+  })();
+
+  /* ======================================================================
+     THE DATE IT STARTED — everything below counts from CONFIG.anniversary
+     ====================================================================== */
+  const MONTHS = ['January','February','March','April','May','June','July',
+                  'August','September','October','November','December'];
+  const ANNIV = (function () {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(CONFIG.anniversary || ''));
+    return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+  })();
+  const SKY_SEED = ANNIV ? (ANNIV.getFullYear()*10000 + (ANNIV.getMonth()+1)*100 + ANNIV.getDate())
+                         : 20210227;
+  const prettyDate = (d) => d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+  function elapsed(d) {
+    const now = new Date();
+    let y = now.getFullYear() - d.getFullYear();
+    let mo = now.getMonth() - d.getMonth();
+    let da = now.getDate() - d.getDate();
+    /* borrow from the previous month, which is what makes this read right
+       on, say, the 31st of a month following a 30-day one */
+    if (da < 0) { mo--; da += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+    if (mo < 0) { mo += 12; y--; }
+    return { y: y, mo: mo, da: da, days: Math.round((now - d) / 86400000) };
+  }
+  function togetherLine() {
+    if (!ANNIV) return '';
+    const t = elapsed(ANNIV);
+    const bit = (n, w) => n ? n + ' ' + w + (n === 1 ? '' : 's') : '';
+    const parts = [bit(t.y, 'year'), bit(t.mo, 'month'), bit(t.da, 'day')].filter(Boolean);
+    return parts.join(', ') + ' ago · ' + t.days.toLocaleString() + ' days together';
+  }
+  if (ANNIV) {
+    setText('skyWhen', prettyDate(ANNIV));
+    setText('skySince', (CONFIG.sky.label ? CONFIG.sky.label + ' · ' : '') + togetherLine());
+  } else {
+    setText('skyWhen', CONFIG.sky.label || '');
+  }
+
+  /* ======================================================================
+     STAR MAP
+     ====================================================================== */
+  (function starmap() {
+    const svg = el('svg', { viewBox:'0 0 400 400', role:'img' });
+    svg.setAttribute('aria-label', 'A circle of night sky, with stars and a few constellation lines');
+    const r = rng(SKY_SEED);
+    const pts = [];
+    for (let i = 0; i < 190; i++) {
+      /* even spread across the disc: sqrt keeps them from clumping at the middle */
+      const a = r() * Math.PI*2, rad = Math.sqrt(r()) * 188;
+      const x = 200 + Math.cos(a)*rad, y = 200 + Math.sin(a)*rad;
+      const size = r();
+      const s = el('circle', { class:'star twinkle', cx:x.toFixed(1), cy:y.toFixed(1),
+        r: (size < .72 ? 0.9 + r()*0.8 : 1.9 + r()*1.6).toFixed(2) });
+      s.style.setProperty('--d', (r()*3.6).toFixed(2) + 's');
+      s.setAttribute('opacity', (0.5 + r()*0.5).toFixed(2));
+      svg.appendChild(s);
+      if (size > 0.86) pts.push([x, y]);
+    }
+    /* Join the brightest into two loose constellations by walking to the
+       NEAREST unused star each step — joining them in index order instead
+       draws long zigzags across the whole sky, which no constellation does. */
+    const used = pts.map(() => false);
+    for (let k = 0; k < 2; k++) {
+      let at = used.indexOf(false);
+      if (at < 0) break;
+      const chain = [pts[at]];
+      used[at] = true;
+      for (let step = 0; step < 4; step++) {
+        let best = -1, bestD = Infinity;
+        for (let j = 0; j < pts.length; j++) {
+          if (used[j]) continue;
+          const dx = pts[j][0] - pts[at][0], dy = pts[j][1] - pts[at][1];
+          const dd = dx*dx + dy*dy;
+          if (dd < bestD) { bestD = dd; best = j; }
+        }
+        if (best < 0) break;
+        used[best] = true; at = best; chain.push(pts[at]);
+      }
+      if (chain.length < 3) break;
+      svg.appendChild(el('polyline', { class:'cline',
+        points: chain.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ') }));
+    }
+    $('skyDisc').appendChild(svg);
+  })();
+
+  /* ======================================================================
+     WALLPAPER — the same sky, redrawn to a canvas at full resolution
+     ====================================================================== */
+  (function wallpaper() {
+    const W = CONFIG.wallpaper, cv = $('wpCanvas'), ctx = cv.getContext('2d');
+    setText('wpHeading', W.heading);
+    setText('wpLede', W.lede);
+    $('wpDownload').textContent = W.download;
+
+    const NIGHT = '#17181C', STAR = '#FFF9F5';
+    let sizeIdx = 0;
+
+    function draw(x, Wd, Ht) {
+      x.fillStyle = NIGHT;
+      x.fillRect(0, 0, Wd, Ht);
+
+      const r = rng(SKY_SEED);
+      const unit = Math.max(Wd, Ht) / 1000;
+      const n = Math.min(900, Math.round(Wd * Ht / 7000));
+      const bright = [];
+
+      for (let i = 0; i < n; i++) {
+        const px = r() * Wd, py = r() * Ht, size = r();
+        const rad = (size < 0.72 ? 0.9 + r() * 0.8 : 1.9 + r() * 1.6) * unit * 1.3;
+        x.globalAlpha = 0.45 + r() * 0.55;
+        x.fillStyle = STAR;
+        x.beginPath(); x.arc(px, py, rad, 0, Math.PI * 2); x.fill();
+        if (size > 0.9) bright.push([px, py]);
+      }
+      x.globalAlpha = 1;
+
+      /* constellations: walk to the nearest unused bright star, so the lines
+         stay local instead of zigzagging across the whole sky */
+      const used = bright.map(function () { return false; });
+      x.strokeStyle = 'rgba(255,249,245,.40)';
+      x.lineWidth = Math.max(1, unit * 0.9);
+      for (let k = 0; k < 3; k++) {
+        let at = used.indexOf(false);
+        if (at < 0) break;
+        used[at] = true;
+        x.beginPath();
+        x.moveTo(bright[at][0], bright[at][1]);
+        let drawn = 0;
+        for (let step = 0; step < 4; step++) {
+          let best = -1, bestD = Infinity;
+          for (let j = 0; j < bright.length; j++) {
+            if (used[j]) continue;
+            const dx = bright[j][0] - bright[at][0], dy = bright[j][1] - bright[at][1];
+            const dd = dx * dx + dy * dy;
+            if (dd < bestD) { bestD = dd; best = j; }
+          }
+          if (best < 0) break;
+          used[best] = true; at = best;
+          x.lineTo(bright[at][0], bright[at][1]);
+          drawn++;
+        }
+        if (drawn >= 2) x.stroke();
+      }
+
+      /* a soft vignette — no caption to seat any more, just depth */
+      const g = x.createRadialGradient(Wd / 2, Ht * 0.42, Math.min(Wd, Ht) * 0.15,
+                                       Wd / 2, Ht * 0.42, Math.max(Wd, Ht) * 0.78);
+      g.addColorStop(0, 'rgba(23,24,28,0)');
+      g.addColorStop(1, 'rgba(0,0,0,.38)');
+      x.fillStyle = g; x.fillRect(0, 0, Wd, Ht);
+    }
+
+    function render() {
+      const sz = W.sizes[sizeIdx];
+      cv.width = sz.w; cv.height = sz.h;
+      draw(ctx, sz.w, sz.h);
+    }
+
+    const sizeBtns = [];
+    W.sizes.forEach(function (sz, i) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'wp-opt';
+      b.textContent = sz.label;
+      b.setAttribute('aria-pressed', String(i === 0));
+      b.addEventListener('click', function () {
+        sizeIdx = i;
+        sizeBtns.forEach(function (o, j) { o.setAttribute('aria-pressed', String(j === i)); });
+        render();
+      });
+      sizeBtns.push(b); $('wpSizes').appendChild(b);
+    });
+
+    render();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+
+    $('wpDownload').addEventListener('click', function () {
+      const sz = W.sizes[sizeIdx];
+      const slug = (CONFIG.herName || 'wallpaper').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const name = slug + '-sky-' + sz.label.toLowerCase() + '.png';
+      cv.toBlob(function (blob) {
+        if (!blob) { $('wpStatus').textContent = 'Could not export the image.'; return; }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+        $('wpStatus').textContent = W.saved;
+      }, 'image/png');
+    });
+  })();
+
+  /* ======================================================================
+     SEALED LETTER
+     ====================================================================== */
+  (function letter() {
+    const env = $('envelope'), card = $('letterCard');
+    card.innerHTML = CONFIG.letter.body.map(p => '<p></p>').join('') +
+      '<p class="signoff"></p><p class="sign"></p>';
+    const ps = card.querySelectorAll('p');
+    CONFIG.letter.body.forEach((txt, i) => { ps[i].textContent = txt; });
+    card.querySelector('.signoff').textContent = CONFIG.letter.signoff;
+    card.querySelector('.sign').textContent = CONFIG.letter.signature || CONFIG.myName;
+    env.setAttribute('aria-label', 'A sealed letter from ' + CONFIG.myName + '. Open it.');
+    env.addEventListener('click', () => {
+      if (env.getAttribute('aria-expanded') === 'true') return;
+      env.setAttribute('aria-expanded', 'true');
+      env.setAttribute('aria-label', 'The letter is open, below.');
+      card.hidden = false;
+      requestAnimationFrame(() => card.setAttribute('data-open', 'true'));
+    });
+  })();
+
+  /* ======================================================================
+     BOOK SPREAD DIALOG
+     ====================================================================== */
+  const dlg = $('bookDialog'), shell = $('spreadShell'),
+        pageLeft = $('pageLeft'), pageRight = $('pageRight'),
+        indicator = $('spreadIndicator'), prevBtn = $('prevBtn'), nextBtn = $('nextBtn');
+  const mqWide = window.matchMedia('(min-width: 768px)');
+  let currentBook = 0, cursor = 0, lastTrigger = null, closeTimer = null;
+  const step = () => (mqWide.matches ? 2 : 1);
+
+  function openBook(index, trigger) {
+    currentBook = index; cursor = 0; lastTrigger = trigger || null;
+    const book = CONFIG.books[index];
+    $('dialogTitle').textContent = book.title;
+    shell.style.setProperty('--spine', book.color);
+    $('dialogSwatch').style.setProperty('--spine', book.color);
+    render(0);
+    if (typeof dlg.showModal === 'function') dlg.showModal();
+    else dlg.setAttribute('open', '');
+    requestAnimationFrame(() => $('closeBtn').focus());
+  }
+  function closeBook() {
+    if (closeTimer) return;
+    const finish = () => {
+      closeTimer = null; dlg.classList.remove('closing');
+      if (dlg.open) dlg.close(); else dlg.removeAttribute('open');
+      restoreFocus();
+    };
+    if (reduceMotion()) { finish(); return; }
+    dlg.classList.add('closing');
+    closeTimer = setTimeout(finish, 200);   /* explicit final state, never
+                                               dependent on animationend */
+  }
+  function restoreFocus() {
+    if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus();
+    lastTrigger = null;
+  }
+  function render(direction) {
+    const pages = CONFIG.books[currentBook].pages, wide = mqWide.matches;
+    if (wide && cursor % 2 !== 0) cursor -= 1;
+    cursor = Math.max(0, Math.min(cursor, pages.length - 1));
+    pageLeft.innerHTML = pages[cursor] || '';
+    if (wide) {
+      pageRight.hidden = false;
+      const right = pages[cursor+1];
+      pageRight.innerHTML = right || '';
+      if (right) pageRight.removeAttribute('aria-hidden');
+      else pageRight.setAttribute('aria-hidden', 'true');
+    } else { pageRight.hidden = true; pageRight.innerHTML = ''; }
+    if (direction !== 0 && !reduceMotion()) {
+      [pageLeft, pageRight].forEach((e) => {
+        e.style.setProperty('--turn-from', direction < 0 ? '-10px' : '10px');
+        e.classList.remove('turning'); void e.offsetWidth; e.classList.add('turning');
+      });
+    }
+    const total = wide ? Math.ceil(pages.length/2) : pages.length;
+    const at    = wide ? Math.floor(cursor/2)+1 : cursor+1;
+    indicator.textContent = (wide ? 'Spread ' : 'Page ') + at + ' of ' + total;
+    prevBtn.disabled = cursor <= 0;
+    nextBtn.disabled = cursor + step() >= pages.length;
+    prevBtn.setAttribute('aria-label', wide ? 'Previous spread' : 'Previous page');
+    nextBtn.setAttribute('aria-label', wide ? 'Next spread' : 'Next page');
+    $('spread').scrollTop = 0;
+  }
+  function turn(delta) {
+    const pages = CONFIG.books[currentBook].pages;
+    const next = cursor + delta*step();
+    if (next < 0 || next >= pages.length) return;
+    cursor = next; render(delta);
+  }
+  prevBtn.addEventListener('click', () => turn(-1));
+  nextBtn.addEventListener('click', () => turn(1));
+  $('closeBtn').addEventListener('click', closeBook);
+  dlg.addEventListener('cancel', (e) => { e.preventDefault(); closeBook(); });
+  /* backdrop click — press AND release must both land on the backdrop, or
+     selecting text in a page and releasing outside would close the book */
+  let pressedBackdrop = false;
+  dlg.addEventListener('mousedown', (e) => { pressedBackdrop = (e.target === dlg); });
+  dlg.addEventListener('click', (e) => {
+    if (e.target === dlg && pressedBackdrop) closeBook();
+    pressedBackdrop = false;
+  });
+  dlg.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); turn(1); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); turn(-1); }
+  });
+  dlg.addEventListener('close', restoreFocus);
+  const onBp = () => { if (dlg.open) render(0); };
+  if (mqWide.addEventListener) mqWide.addEventListener('change', onBp);
+  else if (mqWide.addListener) mqWide.addListener(onBp);
+
+})();
+</script>
+</body>
+</html>
